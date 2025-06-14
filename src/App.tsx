@@ -8,6 +8,8 @@ import NotFound from "./pages/NotFound";
 import ThreadsPage from "./pages/ThreadsPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
 import AuthPage from "./pages/AuthPage";
+import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
 import useSession from "@/hooks/useSession";
 
 const queryClient = new QueryClient();
@@ -23,6 +25,8 @@ const App = () => (
           <Route path="/threads" element={<ThreadsPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

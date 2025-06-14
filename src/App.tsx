@@ -10,6 +10,7 @@ import LeaderboardPage from "./pages/LeaderboardPage";
 import AuthPage from "./pages/AuthPage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
+import ReportProblemPage from "./pages/ReportProblemPage";
 import useSession from "@/hooks/useSession";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/report" element={<ReportProblemPage />} />
           <Route path="/threads" element={<ThreadsPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/auth" element={<AuthPage />} />

@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import ProfileButton from "@/components/ProfileButton";
 import ProfileMenu from "@/components/ProfileMenu";
 import useSession from "@/hooks/useSession";
+import { useNavigate } from "react-router-dom";
 
 // Remove id fields from mockIssues
 const mockIssues: IssueCardProps[] = [
@@ -54,6 +55,7 @@ const navLinks = [
 
 const Index = () => {
   const { user, loading } = useSession();
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* GEN Z NAVBAR */}
@@ -108,36 +110,44 @@ const Index = () => {
           )}
         </div>
       </header>
-      <main className="flex flex-1 pt-28 px-6 md:px-12 xl:px-32 gap-8 w-full transition-all duration-300">
-        {/* Left: Report a Problem */}
-        <aside className="hidden lg:flex flex-col w-96 xl:w-[380px] shrink-0 sticky top-28 self-start animate-fade-in">
-          <ReportProblem />
-        </aside>
-
-        {/* Center: Civic Issue Activity & Threads */}
-        <section className="flex-1 max-w-3xl mx-auto flex flex-col gap-8">
-          {/* Issues Activity Board */}
-          <div>
-            <h2 className="font-semibold text-2xl text-blue-900 mb-2 flex items-center gap-2">
-              Live Civic Issues
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {mockIssues.map((issue, idx) =>
-                <IssueCard key={idx} {...issue} />
-              )}
+      <main className="flex flex-1 pt-28 px-6 md:px-12 xl:px-32 gap-8 w-full transition-all duration-300 flex-col">
+        {/* Report a Problem Button */}
+        <div className="flex justify-center mb-6">
+          <button
+            onClick={() => navigate("/report")}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-pink-400 text-white rounded-2xl shadow-lg font-bold text-lg hover:scale-105 transition transform hover:bg-pink-500 focus:outline-none"
+          >
+            <span role="img" aria-label="report">📝</span> Report a Problem
+          </button>
+        </div>
+        <div className="flex gap-8 w-full">
+          {/* Left: Report a Problem - removed */}
+          {/* <aside className="hidden lg:flex flex-col w-96 xl:w-[380px] shrink-0 sticky top-28 self-start animate-fade-in">
+            <ReportProblem />
+          </aside> */}
+          {/* Center: Civic Issue Activity & Threads */}
+          <section className="flex-1 max-w-3xl mx-auto flex flex-col gap-8">
+            {/* Issues Activity Board */}
+            <div>
+              <h2 className="font-semibold text-2xl text-blue-900 mb-2 flex items-center gap-2">
+                Live Civic Issues
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {mockIssues.map((issue, idx) =>
+                  <IssueCard key={idx} {...issue} />
+                )}
+              </div>
             </div>
-          </div>
-
-          {/* Community Threads */}
-          <div className="pt-4">
-            <Threads />
-          </div>
-        </section>
-
-        {/* Right: Leaderboard */}
-        <aside className="hidden xl:flex flex-col w-[300px] shrink-0 pt-0 sticky top-28 self-start animate-fade-in">
-          <Leaderboard />
-        </aside>
+            {/* Community Threads */}
+            <div className="pt-4">
+              <Threads />
+            </div>
+          </section>
+          {/* Right: Leaderboard */}
+          <aside className="hidden xl:flex flex-col w-[300px] shrink-0 pt-0 sticky top-28 self-start animate-fade-in">
+            <Leaderboard />
+          </aside>
+        </div>
       </main>
       <footer className="mt-16 py-8 px-4 text-xs text-center text-muted-foreground bg-transparent">
         &copy; {new Date().getFullYear()} JanConnect &middot; Civic Tech for All

@@ -1,0 +1,34 @@
+
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+
+// Import routes
+const issueRoutes = require('./routes/issueRoutes');
+const threadRoutes = require('./routes/threadRoutes');
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+app.use(cors());
+app.use(bodyParser.json());
+
+mongoose.connect('mongodb://localhost:27017/janconnect', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', () => { console.log('Connected to MongoDB!'); });
+
+// Routes
+app.use('/api/issues', issueRoutes);
+app.use('/api/threads', threadRoutes);
+
+// Health check
+app.get('/', (req, res) => res.send('JanConnect API running!'));
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+module.exports = app; // For testing

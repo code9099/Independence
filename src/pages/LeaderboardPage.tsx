@@ -1,10 +1,11 @@
 
 import LeaderboardShowcase from "@/components/LeaderboardShowcase";
-import { Link } from "react-router-dom";
+import ReturnHomeButton from "@/components/ReturnHomeButton";
 
 const LeaderboardPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-tr from-blue-950 via-pink-900 to-purple-900 flex flex-col items-center relative overflow-x-hidden">
+      <ReturnHomeButton />
       {/* Header */}
       <header className="w-full flex flex-col items-center py-8 mb-6 z-10">
         <h1 className="font-extrabold text-5xl md:text-6xl text-white tracking-tight drop-shadow-[0_2px_16px_rgba(255,0,128,0.4)] animate-fade-in">
@@ -13,12 +14,7 @@ const LeaderboardPage = () => {
         <p className="mt-3 text-lg md:text-2xl text-pink-100 font-medium leading-relaxed text-center drop-shadow">
           Celebrate top contributors! <span className="text-yellow-300">Climb the ranks, earn rewards, inspire others.</span>
         </p>
-        <Link
-          to="/"
-          className="mt-5 bg-pink-600 hover:bg-pink-700 text-white font-bold px-5 py-2 rounded-full shadow-xl transition-transform duration-200 hover:scale-105 animate-fade-in"
-        >
-          ← Back to Home
-        </Link>
+        {/* Back to Home button removed in favor of floating cute button */}
       </header>
       {/* Main Content */}
       <main className="w-full max-w-3xl flex flex-col items-center gap-8 px-4 pb-16">

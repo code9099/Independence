@@ -53,7 +53,7 @@ const navLinks = [
 ];
 
 const Index = () => {
-  const { user } = useSession();
+  const { user, loading } = useSession();
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* GEN Z NAVBAR */}
@@ -92,7 +92,10 @@ const Index = () => {
         {/* Right: Actions (Dark Mode + Profile/Btn) */}
         <div className="flex items-center gap-2 md:gap-4">
           <DarkModeToggle />
-          {user ? (
+          {/* Wait until session is loaded before rendering user action */}
+          {loading ? (
+            <span className="px-4 py-2 text-blue-600 text-sm">Loading...</span>
+          ) : user ? (
             <ProfileMenu />
           ) : (
             <a href="/auth">

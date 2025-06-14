@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { LogOut, User, Settings } from "lucide-react";
@@ -8,10 +7,14 @@ import useSession from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 
 export default function ProfileMenu() {
-  const { user } = useSession();
+  const { user, loading } = useSession();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const [loadingLogout, setLoadingLogout] = useState(false);
 
+  // Wait for session to load before rendering any menu
+  if (loading) {
+    return null;
+  }
   if (!user) return null;
 
   return (
@@ -37,11 +40,11 @@ export default function ProfileMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="text-destructive focus:bg-destructive/20 focus:text-destructive"
-          disabled={loading}
+          disabled={loadingLogout}
           onClick={async () => {
-            setLoading(true);
+            setLoadingLogout(true);
             await supabase.auth.signOut();
-            setLoading(false);
+            setLoadingLogout(false);
             navigate("/auth");
           }}
         >

@@ -6,8 +6,12 @@ import useSession from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 
 export default function ProfileButton() {
-  const { user } = useSession();
+  const { user, loading } = useSession();
   const navigate = useNavigate();
+
+  if (loading) {
+    return null;
+  }
 
   if (!user) return null;
 

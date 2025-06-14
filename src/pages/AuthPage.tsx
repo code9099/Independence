@@ -25,8 +25,15 @@ export default function AuthPage() {
   const navigate = useNavigate();
   const { user, loading: userLoading } = useSession();
 
-  // Already signed in? Go home.
-  if (user && !userLoading) {
+  // Only proceed to check redirect/login if session check has loaded
+  if (userLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-sky-100">
+        <span className="text-xl text-blue-700 font-semibold animate-pulse">Loading...</span>
+      </div>
+    );
+  }
+  if (user) {
     navigate("/");
     return null;
   }

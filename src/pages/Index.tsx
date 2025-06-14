@@ -1,4 +1,3 @@
-
 import { Home, Users, MessageCircle } from "lucide-react";
 import ReportProblem from "@/components/ReportProblem";
 import Leaderboard from "@/components/Leaderboard";
@@ -46,7 +45,7 @@ const navLinks = [
   {
     label: "Leaderboard",
     icon: Users,
-    url: "#leaderboard",
+    url: "/leaderboard",
   },
 ];
 

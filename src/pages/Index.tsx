@@ -1,13 +1,13 @@
+
 import ReportProblem from "@/components/ReportProblem";
 import Leaderboard from "@/components/Leaderboard";
 import Threads from "@/components/Threads";
 import { IssueCard, IssueCardProps } from "@/components/IssueCard";
 import DarkModeToggle from "@/components/DarkModeToggle";
 
-// Fix: Add typing for mockIssues to ensure the status field matches IssueCardProps
+// Remove id fields from mockIssues
 const mockIssues: IssueCardProps[] = [
   {
-    id: 1 as never, // Will remove the id when spreading below, just to satisfy TS
     type: "Garbage Overflow",
     desc: "Large pile of garbage near main street crossing.",
     department: "MCD",
@@ -15,7 +15,6 @@ const mockIssues: IssueCardProps[] = [
     submitted: "2 min ago"
   },
   {
-    id: 2 as never,
     type: "Water Leakage",
     desc: "Leakage from water main, heavy flow, please fix urgently.",
     department: "PWD",
@@ -23,7 +22,6 @@ const mockIssues: IssueCardProps[] = [
     submitted: "10 min ago"
   },
   {
-    id: 3 as never,
     type: "Streetlight Broken",
     desc: "Multiple lights not working in Green Park.",
     department: "PWD",
@@ -56,8 +54,8 @@ const Index = () => {
               Live Civic Issues
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {mockIssues.map(({ id, ...issueProps }, idx) =>
-                <IssueCard key={idx} {...issueProps} />
+              {mockIssues.map((issue, idx) =>
+                <IssueCard key={idx} {...issue} />
               )}
             </div>
           </div>

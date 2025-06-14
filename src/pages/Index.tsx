@@ -6,6 +6,7 @@ import { IssueCard, IssueCardProps } from "@/components/IssueCard";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import { Link } from "react-router-dom";
 import ProfileButton from "@/components/ProfileButton";
+import ProfileMenu from "@/components/ProfileMenu";
 import useSession from "@/hooks/useSession";
 
 // Remove id fields from mockIssues
@@ -92,7 +93,7 @@ const Index = () => {
         <div className="flex items-center gap-2 md:gap-4">
           <DarkModeToggle />
           {user ? (
-            <ProfileButton />
+            <ProfileMenu />
           ) : (
             <a href="/auth">
               <button className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-pink-400 hover:scale-105 focus:ring-2 ring-pink-300 transition shadow-md bg-gradient-to-br from-blue-200 to-pink-200 flex items-center justify-center">

@@ -5,6 +5,7 @@ import Leaderboard from "@/components/Leaderboard";
 import Threads from "@/components/Threads";
 import { IssueCard, IssueCardProps } from "@/components/IssueCard";
 import DarkModeToggle from "@/components/DarkModeToggle";
+import { Link } from "react-router-dom";
 
 // Remove id fields from mockIssues
 const mockIssues: IssueCardProps[] = [
@@ -35,12 +36,12 @@ const navLinks = [
   {
     label: "Home",
     icon: Home,
-    url: "#",
+    url: "/",
   },
   {
     label: "Threads",
     icon: MessageCircle,
-    url: "#threads",
+    url: "/threads",
   },
   {
     label: "Leaderboard",
@@ -63,16 +64,27 @@ const Index = () => {
         </div>
         {/* Center: Navigation */}
         <nav className="hidden md:flex gap-2 md:gap-4 items-center">
-          {navLinks.map((nav) => (
-            <a
-              href={nav.url}
-              key={nav.label}
-              className="group flex flex-col items-center px-3 py-1 transition-all duration-200 rounded-xl hover:bg-blue-100/70 hover:scale-110 active:bg-blue-200 border border-transparent hover:border-blue-400"
-            >
-              <nav.icon size={26} className="mb-1 text-blue-700 group-hover:text-pink-500 transition-all" />
-              <span className="text-xs font-medium text-blue-900 group-hover:text-pink-500 transition">{nav.label}</span>
-            </a>
-          ))}
+          {navLinks.map((nav) =>
+            nav.url.startsWith("/") ? (
+              <Link
+                to={nav.url}
+                key={nav.label}
+                className="group flex flex-col items-center px-3 py-1 transition-all duration-200 rounded-xl hover:bg-blue-100/70 hover:scale-110 active:bg-blue-200 border border-transparent hover:border-blue-400"
+              >
+                <nav.icon size={26} className="mb-1 text-blue-700 group-hover:text-pink-500 transition-all" />
+                <span className="text-xs font-medium text-blue-900 group-hover:text-pink-500 transition">{nav.label}</span>
+              </Link>
+            ) : (
+              <a
+                href={nav.url}
+                key={nav.label}
+                className="group flex flex-col items-center px-3 py-1 transition-all duration-200 rounded-xl hover:bg-blue-100/70 hover:scale-110 active:bg-blue-200 border border-transparent hover:border-blue-400"
+              >
+                <nav.icon size={26} className="mb-1 text-blue-700 group-hover:text-pink-500 transition-all" />
+                <span className="text-xs font-medium text-blue-900 group-hover:text-pink-500 transition">{nav.label}</span>
+              </a>
+            )
+          )}
         </nav>
         {/* Right: Actions (Dark Mode + Avatar/Btn) */}
         <div className="flex items-center gap-2 md:gap-4">

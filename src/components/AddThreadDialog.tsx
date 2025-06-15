@@ -27,8 +27,8 @@ const defaultImages = [
   "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?auto=format&fit=crop&w=600&q=80",
 ];
 
-// Props: onAddThread (callback), variant ("fab" | "button")
-const AddThreadDialog = ({ onAddThread, variant = "fab" }: { onAddThread: (thread: any) => void, variant?: "fab" | "button" }) => {
+// Props: onAddThread (callback)
+const AddThreadDialog = ({ onAddThread }: { onAddThread: (thread: any) => void }) => {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
     user: "",
@@ -91,8 +91,9 @@ const AddThreadDialog = ({ onAddThread, variant = "fab" }: { onAddThread: (threa
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <>
+      {/* ONE button per DialogTrigger, not a fragment */}
+      <div>
+        <DialogTrigger asChild>
           <button
             type="button"
             className={fabIcon}
@@ -101,6 +102,8 @@ const AddThreadDialog = ({ onAddThread, variant = "fab" }: { onAddThread: (threa
           >
             <Plus className="w-8 h-8" />
           </button>
+        </DialogTrigger>
+        <DialogTrigger asChild>
           <button
             type="button"
             className={desktopButton}
@@ -109,8 +112,8 @@ const AddThreadDialog = ({ onAddThread, variant = "fab" }: { onAddThread: (threa
             <Plus className="inline mr-2" />
             New Thread
           </button>
-        </>
-      </DialogTrigger>
+        </DialogTrigger>
+      </div>
       <DialogContent className="max-w-md w-full rounded-3xl shadow-2xl border-0 bg-white/95 dark:bg-muted/95 px-0 py-0 animate-fade-in">
         <form onSubmit={handleAddThread}>
           <DialogHeader className="px-6 pt-7 pb-1">
@@ -215,3 +218,4 @@ const AddThreadDialog = ({ onAddThread, variant = "fab" }: { onAddThread: (threa
 };
 
 export default AddThreadDialog;
+

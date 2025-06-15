@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 
 const IssueSchema = new mongoose.Schema({
@@ -11,5 +10,14 @@ const IssueSchema = new mongoose.Schema({
   reporter: { type: String },
   referenceNumber: { type: String }, // stores portal reference
   autoEmailSent: { type: Boolean, default: false }, // NEW FIELD
+  emailSent: { type: Boolean, default: false },
+  emailLog: {
+    sentAt: Date,
+    to: String,
+    html: String,
+    status: String,
+    error: String,
+    messageId: String,
+  },
 });
 module.exports = mongoose.model("Issue", IssueSchema);

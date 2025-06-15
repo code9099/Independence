@@ -44,19 +44,13 @@ const MLAInfoCard: React.FC<MLAInfoCardProps> = ({
 
   const gender = guessGender(mla_name);
   const label =
-    gender === "female"
-      ? "She is the MLA"
-      : "He is the MLA";
+    gender === "female" ? "She is the MLA" : "He is the MLA";
 
   return (
     <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-center gap-4 shadow">
-      {mla_photo_url ? (
-        <img src={mla_photo_url} alt={mla_name} className="w-16 h-16 rounded-full border object-cover bg-white" />
-      ) : (
-        <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-bold text-blue-700">
-          👤
-        </div>
-      )}
+      <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-bold text-blue-700">
+        👤
+      </div>
       <div>
         <div className="font-bold text-blue-800 text-lg flex items-center gap-2">
           {mla_name}
@@ -73,4 +67,3 @@ const MLAInfoCard: React.FC<MLAInfoCardProps> = ({
 };
 
 export default MLAInfoCard;
-

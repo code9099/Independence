@@ -2,6 +2,13 @@
 import React from "react";
 import { useConstituencies } from "@/hooks/useConstituencies";
 import { Loader2 } from "lucide-react";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ConstituencySelectorProps {
   value: string | null;
@@ -11,7 +18,6 @@ interface ConstituencySelectorProps {
 const ConstituencySelector: React.FC<ConstituencySelectorProps> = ({ value, onChange }) => {
   const { data: constituencies, isLoading, refetch, error } = useConstituencies();
 
-  // Extra debug log for troubleshooting!
   React.useEffect(() => {
     console.log("[ConstituencySelector] Constituencies loaded:", constituencies);
     if (error) {
@@ -24,34 +30,50 @@ const ConstituencySelector: React.FC<ConstituencySelectorProps> = ({ value, onCh
     refetch();
   };
 
-  if (isLoading) return (
-    <div className="flex items-center gap-2 py-6 justify-center text-blue-700">
-      <Loader2 className="animate-spin" /> Loading constituencies...
-    </div>
-  );
+  if (isLoading)
+    return (
+      <div className="flex items-center gap-2 py-6 justify-center text-blue-700">
+        <Loader2 className="animate-spin" /> Loading constituencies...
+      </div>
+    );
 
-  if (error) return (
-    <div className="text-red-600 py-2">
-      Unable to load constituencies. Please try again later.
-    </div>
-  );
+  if (error)
+    return (
+      <div className="text-red-600 py-2">
+        Unable to load constituencies. Please try again later.
+      </div>
+    );
 
   return (
-    <select
-      className="block w-full px-4 py-2 rounded-xl border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white text-blue-900 font-semibold"
+    <Select
       value={value || ""}
-      onChange={e => onChange(e.target.value)}
-      onFocus={handleFocus}
+      onValueChange={(val) => onChange(val)}
+      defaultValue=""
+      disabled={isLoading}
     >
-      <option value="" disabled>Select your constituency...</option>
-      {Array.isArray(constituencies) && constituencies.length > 0 ? (
-        constituencies.map((c: any) => (
-          <option value={c.id} key={c.id}>{c.name}</option>
-        ))
-      ) : (
-        <option value="" disabled>No constituencies found.</option>
-      )}
-    </select>
+      <SelectTrigger
+        className="w-full px-4 py-2 rounded-xl border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white text-blue-900 font-semibold"
+        onFocus={handleFocus}
+      >
+        <SelectValue placeholder="Select your constituency..." />
+      </SelectTrigger>
+      <SelectContent
+        className="max-h-80 bg-white z-50"
+        position="popper"
+      >
+        {Array.isArray(constituencies) && constituencies.length > 0 ? (
+          constituencies.map((c: any) => (
+            <SelectItem key={c.id} value={String(c.id)}>
+              {c.name}
+            </SelectItem>
+          ))
+        ) : (
+          <SelectItem value="" disabled>
+            No constituencies found.
+          </SelectItem>
+        )}
+      </SelectContent>
+    </Select>
   );
 };
 

@@ -1,21 +1,10 @@
-import { useState } from "react";
+
 import { useNavigate, Link } from "react-router-dom";
 import { LogOut, User, Settings } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import useSession from "@/hooks/useSession";
-import { supabase } from "@/integrations/supabase/client";
 
 export default function ProfileMenu() {
-  const { user, loading } = useSession();
   const navigate = useNavigate();
-  const [loadingLogout, setLoadingLogout] = useState(false);
-
-  // Wait for session to load before rendering any menu
-  if (loading) {
-    return null;
-  }
-  if (!user) return null;
 
   return (
     <DropdownMenu>
@@ -40,12 +29,9 @@ export default function ProfileMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="text-destructive focus:bg-destructive/20 focus:text-destructive"
-          disabled={loadingLogout}
-          onClick={async () => {
-            setLoadingLogout(true);
-            await supabase.auth.signOut();
-            setLoadingLogout(false);
-            navigate("/auth");
+          onClick={() => {
+            // Since no real logout, just go to home for "logout"
+            navigate("/");
           }}
         >
           <LogOut size={16} className="mr-1" /> Logout

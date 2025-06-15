@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/sidebar";
 import { Home, Users, MessageCircle, User, Settings, LogOut } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 
 const navLinks = [
   {
@@ -31,7 +30,7 @@ const navLinks = [
   },
 ];
 
-export default function AppSidebar({ onLogout }: { onLogout: () => void }) {
+export default function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -80,9 +79,9 @@ export default function AppSidebar({ onLogout }: { onLogout: () => void }) {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  onClick={async () => {
-                    await supabase.auth.signOut();
-                    if (onLogout) onLogout();
+                  onClick={() => {
+                    // "Logout": simulate logout by redirecting home with no real effect
+                    navigate("/");
                   }}
                 >
                   <button>

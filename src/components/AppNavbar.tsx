@@ -1,10 +1,10 @@
 
 import { Home, Users, MessageCircle } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import ProfileMenu from "@/components/ProfileMenu";
-import useSession from "@/hooks/useSession";
 
+// Static navLinks
 const navLinks = [
   { label: "Home", icon: Home, url: "/" },
   { label: "Threads", icon: MessageCircle, url: "/threads" },
@@ -17,9 +17,6 @@ type Props = {
 };
 
 export default function AppNavbar({ fixed = true, transparent = false }: Props) {
-  const { user, loading } = useSession();
-  const navigate = useNavigate();
-
   return (
     <header className={`w-full flex items-center justify-between py-3 px-5 md:px-10 ${fixed ? "fixed z-20 top-0 left-0 h-20" : ""} ${transparent ? "bg-white/60 backdrop-blur-lg" : "bg-white"} border-b border-blue-200/40 shadow-xl animate-fade-in rounded-b-2xl`}>
       {/* Left: Logo & Brand */}
@@ -55,19 +52,10 @@ export default function AppNavbar({ fixed = true, transparent = false }: Props) 
           )
         )}
       </nav>
-      {/* Right: Actions (Dark Mode + ProfileMenu or Login/Signup) */}
+      {/* Right: Actions (Dark Mode + ProfileMenu only) */}
       <div className="flex items-center gap-2 md:gap-4">
         <DarkModeToggle />
-        {!loading && user ? (
-          <ProfileMenu />
-        ) : (
-          <button
-            onClick={() => navigate("/auth")}
-            className="px-3 py-1.5 bg-pink-500 text-white rounded-lg font-bold hover:bg-blue-600 transition-colors text-sm md:text-base"
-          >
-            Log In / Sign Up
-          </button>
-        )}
+        <ProfileMenu />
       </div>
     </header>
   );

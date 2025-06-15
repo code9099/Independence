@@ -106,7 +106,7 @@ const Index = () => {
               {/* Right: Actions (Dark Mode + Profile Dropdown) */}
               <div className="flex items-center gap-2 md:gap-4">
                 <DarkModeToggle />
-                <ProfileMenu /> {/* Add the dropdown here for logged-in users */}
+                <ProfileMenu />
               </div>
             </header>
             <main className="flex flex-1 pt-28 px-6 md:px-12 xl:px-32 gap-8 w-full transition-all duration-300 flex-col">
@@ -196,6 +196,12 @@ const Index = () => {
         {/* Right: Actions (Dark Mode Only) */}
         <div className="flex items-center gap-2 md:gap-4">
           <DarkModeToggle />
+          <button
+            onClick={() => navigate("/auth")}
+            className="px-3 py-1.5 bg-pink-500 text-white rounded-lg font-bold hover:bg-blue-600 transition-colors text-sm md:text-base"
+          >
+            Log In / Sign Up
+          </button>
         </div>
       </header>
       <main className="flex flex-1 pt-28 px-6 md:px-12 xl:px-32 gap-8 w-full transition-all duration-300 flex-col">

@@ -104,7 +104,7 @@ const Index = () => {
                   )
                 )}
               </nav>
-              {/* Right: Actions (Dark Mode + Profile Dropdown) */}
+              {/* Right: Actions (Dark Mode + ProfileDropdown) */}
               <div className="flex items-center gap-2 md:gap-4">
                 <DarkModeToggle />
                 <ProfileMenu />
@@ -198,15 +198,20 @@ const Index = () => {
             )
           )}
         </nav>
-        {/* Right: Actions (Dark Mode Only) */}
+        {/* Right: Actions (Dark Mode + ProfileMenu or Login/Signup) */}
         <div className="flex items-center gap-2 md:gap-4">
           <DarkModeToggle />
-          <button
-            onClick={() => navigate("/auth")}
-            className="px-3 py-1.5 bg-pink-500 text-white rounded-lg font-bold hover:bg-blue-600 transition-colors text-sm md:text-base"
-          >
-            Log In / Sign Up
-          </button>
+          {!loading && user ? (
+            // Show profile menu after login/signup, replaces login/signup button
+            <ProfileMenu />
+          ) : (
+            <button
+              onClick={() => navigate("/auth")}
+              className="px-3 py-1.5 bg-pink-500 text-white rounded-lg font-bold hover:bg-blue-600 transition-colors text-sm md:text-base"
+            >
+              Log In / Sign Up
+            </button>
+          )}
         </div>
       </header>
       <main className="flex flex-1 pt-28 px-6 md:px-12 xl:px-32 gap-8 w-full transition-all duration-300 flex-col animate-stagger">

@@ -10,6 +10,7 @@ import MyComplaints from "@/components/MyComplaints";
 import AppSidebar from "@/components/AppSidebar";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import ProfileMenu from "@/components/ProfileMenu";
+import OfficerDetailsCard from "@/components/OfficerDetailsCard";
 
 // Remove id fields from mockIssues
 const mockIssues: IssueCardProps[] = [
@@ -70,7 +71,7 @@ const Index = () => {
         <div className="min-h-screen flex w-full bg-background">
           <AppSidebar onLogout={handleLogout} />
           <SidebarInset>
-            {/* NAVBAR (minus profile dropdown) */}
+            {/* NAVBAR */}
             <header className="w-full flex items-center justify-between py-3 px-5 md:px-10 fixed z-20 top-0 left-0 h-20 bg-white/60 backdrop-blur-lg border-b border-blue-200/40 shadow-xl animate-fade-in rounded-b-2xl">
               {/* Left: Logo & Brand */}
               <div className="flex items-center gap-3">
@@ -110,6 +111,8 @@ const Index = () => {
               </div>
             </header>
             <main className="flex flex-1 pt-28 px-6 md:px-12 xl:px-32 gap-8 w-full transition-all duration-300 flex-col">
+              {/* Officer/MLA Details Card */}
+              <OfficerDetailsCard constituency="New Delhi" />
               {/* Report a Problem Button */}
               <div className="flex justify-center mb-6">
                 <button
@@ -205,6 +208,8 @@ const Index = () => {
         </div>
       </header>
       <main className="flex flex-1 pt-28 px-6 md:px-12 xl:px-32 gap-8 w-full transition-all duration-300 flex-col">
+        {/* Officer/MLA Details Card */}
+        <OfficerDetailsCard constituency="New Delhi" />
         {/* Report a Problem Button */}
         <div className="flex justify-center mb-6">
           <button

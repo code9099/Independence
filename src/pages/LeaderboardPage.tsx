@@ -4,7 +4,6 @@ import LeaderboardShowcase from "@/components/LeaderboardShowcase";
 import ConstituencySelector from "@/components/ConstituencySelector";
 import MLAInfoCard from "@/components/MLAInfoCard";
 import { useConstituencies } from "@/hooks/useConstituencies";
-import AddConstituencyForm from "@/components/AddConstituencyForm";
 
 const LeaderboardPage = () => {
   const [selectedConId, setSelectedConId] = useState<string | null>(null);
@@ -18,7 +17,6 @@ const LeaderboardPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-fuchsia-900 to-pink-900 pt-10 pb-20 flex flex-col items-center">
       <div className="w-full max-w-2xl bg-white/90 rounded-3xl shadow-xl p-8 mb-8">
         <h1 className="font-extrabold text-2xl mb-3 text-blue-800">Delhi Constituency Leaderboard</h1>
-        <AddConstituencyForm onAdded={() => refetch()} />
         <div className="mb-4">
           <ConstituencySelector value={selectedConId} onChange={setSelectedConId} />
         </div>

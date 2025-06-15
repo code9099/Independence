@@ -53,6 +53,7 @@
     "input-otp": "^1.2.4",
     "jest": "^30.0.0",
     "lucide-react": "^0.462.0",
+    "mapbox-gl": "^2.15.0",
     "mongoose": "^8.15.2",
     "next-themes": "^0.3.0",
     "react": "^18.3.1",

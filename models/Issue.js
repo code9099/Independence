@@ -9,6 +9,7 @@ const IssueSchema = new mongoose.Schema({
   constituency: { type: String },
   submittedAt: { type: Date, default: Date.now },
   reporter: { type: String },
-  referenceNumber: { type: String }, // ADDED: stores ref from gov portal
+  referenceNumber: { type: String }, // stores portal reference
+  autoEmailSent: { type: Boolean, default: false }, // NEW FIELD
 });
 module.exports = mongoose.model("Issue", IssueSchema);

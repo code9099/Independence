@@ -35,11 +35,16 @@ async function submitToOfficialPortal(issue) {
   // Submit to real portal
   const result = await handler(issue);
 
-  // Email department head if submission was successful
+  let emailSent = false;
   if (result.success) {
-    await sendDeptEmail(issue, result.reference);
+    try {
+      await sendDeptEmail(issue, result.reference);
+      emailSent = true;
+    } catch (err) {
+      emailSent = false;
+    }
   }
-
+  result.autoEmailSent = emailSent;
   return result;
 }
 

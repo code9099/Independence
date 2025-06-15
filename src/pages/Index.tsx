@@ -9,6 +9,7 @@ import ProfileButton from "@/components/ProfileButton";
 import ProfileMenu from "@/components/ProfileMenu";
 import useSession from "@/hooks/useSession";
 import { useNavigate } from "react-router-dom";
+import MyComplaints from "@/components/MyComplaints";
 
 // Remove id fields from mockIssues
 const mockIssues: IssueCardProps[] = [
@@ -120,6 +121,10 @@ const Index = () => {
             <span role="img" aria-label="report">📝</span> Report a Problem
           </button>
         </div>
+        {/* NEW: My Complaints Section (if user) */}
+        {user && (
+          <MyComplaints />
+        )}
         <div className="flex gap-8 w-full">
           {/* Left: Report a Problem - removed */}
           {/* <aside className="hidden lg:flex flex-col w-96 xl:w-[380px] shrink-0 sticky top-28 self-start animate-fade-in">

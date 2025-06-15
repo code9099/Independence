@@ -1,3 +1,4 @@
+
 const express = require('express');
 const router = express.Router();
 const Issue = require('../models/Issue');
@@ -16,6 +17,10 @@ router.post("/", async (req, res) => {
         issue.referenceNumber = portalResult.reference;
         issue.status = "Pending"; // Optionally update based on portal's state
       }
+      // Track auto email sent
+      if (typeof portalResult?.autoEmailSent === "boolean") {
+        issue.autoEmailSent = portalResult.autoEmailSent;
+      }
     } catch (err) {
       // Fallback if portal submission fails
       console.error("Portal submission failed:", err.message);
@@ -33,9 +38,11 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Get all issues
+// Get all issues for a reporter (by email/user id, optional)
 router.get('/', async (req, res) => {
-  const issues = await Issue.find().sort({ submittedAt: -1 });
+  // Filter by reporter if ?reporter= supplied
+  const filter = req.query.reporter ? { reporter: req.query.reporter } : {};
+  const issues = await Issue.find(filter).sort({ submittedAt: -1 });
   res.json(issues);
 });
 

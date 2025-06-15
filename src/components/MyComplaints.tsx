@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import useSession from "@/hooks/useSession";
@@ -15,25 +14,24 @@ interface Complaint {
   referenceNumber?: string;
 }
 
+// Assume a default "always-logged-in" user
+const DEFAULT_EMAIL = "user@janconnect.com";
+
 export default function MyComplaints() {
-  const { user } = useSession();
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
     setLoading(true);
     fetch(
-      `/api/issues?reporter=${encodeURIComponent(user.email!)}`
+      `/api/issues?reporter=${encodeURIComponent(DEFAULT_EMAIL)}`
     )
       .then(r => r.json())
       .then(res => {
         if (Array.isArray(res)) setComplaints(res);
       })
       .finally(() => setLoading(false));
-  }, [user]);
-
-  if (!user) return null;
+  }, []);
 
   return (
     <div className="bg-white/80 rounded-2xl border border-blue-200 shadow-md p-6 mt-8 animate-fade-in">

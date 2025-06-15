@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,12 +8,12 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ThreadsPage from "./pages/ThreadsPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
-import AuthPage from "./pages/AuthPage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
 import ReportProblemPage from "./pages/ReportProblemPage";
 import HeatmapPage from "./pages/HeatmapPage";
-import useSession from "@/hooks/useSession";
+
+// Remove all authentication routes and logic
 
 const queryClient = new QueryClient();
 
@@ -28,7 +29,6 @@ const App = () => (
           <Route path="/threads" element={<ThreadsPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/heatmap" element={<HeatmapPage />} />
-          <Route path="/auth" element={<AuthPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<SettingsPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

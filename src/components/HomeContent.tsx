@@ -1,11 +1,9 @@
-
 import OfficerDetailsCard from "@/components/OfficerDetailsCard";
 import Leaderboard from "@/components/Leaderboard";
 import { useNavigate } from "react-router-dom";
 import MyComplaints from "@/components/MyComplaints";
 import Threads from "@/components/Threads";
 import { IssueCard, IssueCardProps } from "@/components/IssueCard";
-import useSession from "@/hooks/useSession";
 
 // Mock issues (as before)
 const mockIssues: IssueCardProps[] = [
@@ -33,7 +31,6 @@ const mockIssues: IssueCardProps[] = [
 ];
 
 export default function HomeContent() {
-  const { user } = useSession();
   const navigate = useNavigate();
 
   return (
@@ -52,9 +49,7 @@ export default function HomeContent() {
         </button>
       </div>
       {/* My Complaints Section */}
-      {user && (
-        <div className="swing-in"><MyComplaints /></div>
-      )}
+      <div className="swing-in"><MyComplaints /></div>
       <div className="flex gap-8 w-full">
         {/* Center: Civic Issue Activity & Threads */}
         <section className="flex-1 max-w-3xl mx-auto flex flex-col gap-8 animate-stagger">

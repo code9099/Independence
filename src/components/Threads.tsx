@@ -16,11 +16,34 @@ import {
   DialogClose,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import ThreadList from "./ThreadList";
 import AddThreadDialog from "./AddThreadDialog";
 
-const emojiPicker = ["👍", "😂", "🔥", "😢", "👏", "🤔", "💯"];
+const sorter = [
+  { label: "Hot", key: "hot" },
+  { label: "Recent", key: "recent" },
+  { label: "Top", key: "top" },
+];
 
-// Updated threads with images
+const emojiOptions = [
+  { label: "Roadwork", value: "🚧" },
+  { label: "Garbage", value: "🗑️" },
+  { label: "Light", value: "💡" },
+  { label: "Water", value: "🚰" },
+  { label: "Tree", value: "🌳" },
+  { label: "Animal", value: "🐕" },
+  { label: "Other", value: "💭" },
+];
+
+const defaultImages = [
+  "https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1517022812141-23620dba5c23?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?auto=format&fit=crop&w=600&q=80",
+];
+
 const INITIAL_THREADS = [
   {
     id: 1,
@@ -119,124 +142,10 @@ const INITIAL_THREADS = [
   }
 ];
 
-function ThreadCard({ thread }: { thread: any }) {
-  const [upvotes, setUpvotes] = useState(thread.up);
-  const [downvotes, setDownvotes] = useState(thread.down);
-  const [emoji, setEmoji] = useState<string | null>(null);
-  const [showReplies, setShowReplies] = useState(false);
-
-  return (
-    <div className="bg-white dark:bg-muted/80 rounded-xl px-0 pb-5 mb-5 shadow border border-blue-50 animate-fade-in relative overflow-hidden">
-      {/* Thread Image */}
-      {thread.image && (
-        <img src={thread.image} alt="thread subject" className="w-full h-52 object-cover object-center rounded-t-xl" />
-      )}
-      <div className="px-6 pt-4">
-        <div className="flex items-center gap-3">
-          <img src={thread.avatar} alt={thread.user} className="w-8 h-8 rounded-full border" />
-          <span className="font-semibold">{thread.user}</span>
-          <span className="text-lg">{thread.emoji}</span>
-          <span className="ml-auto text-xs text-gray-400">{thread.created}</span>
-        </div>
-        <div className="pt-2 font-medium text-blue-900">{thread.title}</div>
-        <div className="flex items-center gap-2 pt-2">
-          <button
-            className={cn("rounded-full p-1 hover:bg-blue-100", upvotes > thread.up && "bg-blue-200")}
-            onClick={() => setUpvotes(v => v + 1)}
-            aria-label="Upvote"
-            type="button"
-          >
-            <ArrowUp />
-          </button>
-          <span className="font-semibold">{upvotes}</span>
-          <button
-            className={cn("rounded-full p-1 hover:bg-orange-100", downvotes > thread.down && "bg-orange-200")}
-            onClick={() => setDownvotes(v => v + 1)}
-            aria-label="Downvote"
-            type="button"
-          >
-            <ArrowDown />
-          </button>
-          <span className="font-semibold">{downvotes}</span>
-          {emoji && <span className="ml-4 text-xl animate-bounce">{emoji}</span>}
-          <div className="flex ml-2 gap-1">
-            {emojiPicker.map(em => (
-              <button
-                key={em}
-                className="text-xl hover:scale-125 transition-transform"
-                aria-label={`react with ${em}`}
-                onClick={() => setEmoji(em)}
-                type="button"
-              >{em}</button>
-            ))}
-          </div>
-          <button className="ml-auto text-xs text-gray-600 underline" onClick={() => setShowReplies(r => !r)} type="button">
-            {thread.comments?.length
-              ? (showReplies ? "Hide Replies" : `Show Replies (${thread.comments.length})`)
-              : "Reply"}
-          </button>
-        </div>
-        {showReplies && thread.comments && thread.comments.length > 0 &&
-          <div className="mt-3 pl-8 border-l-2 border-gray-200 dark:border-gray-700 transition-all animate-fade-in">
-            {thread.comments.map((comment: any) => (
-              <div className="mb-2" key={comment.id}>
-                <div className="flex items-center gap-2">
-                  <img src={comment.avatar} alt={comment.user} className="w-7 h-7 rounded-full border" />
-                  <span className="font-medium">{comment.user}</span>
-                  <span className="text-xs text-gray-400">{comment.created}</span>
-                </div>
-                <div className="ml-9 mt-0.5">{comment.text}</div>
-                {comment.replies && (
-                  <div className="pl-8 mt-2 border-l border-gray-100 dark:border-gray-600">
-                    {comment.replies.map((reply: any) => (
-                      <div className="flex items-center gap-2 mb-2" key={reply.id}>
-                        <img src={reply.avatar} alt={reply.user} className="w-6 h-6 rounded-full border" />
-                        <span className="font-medium">{reply.user}</span>
-                        <span className="ml-1">{reply.text}</span>
-                        <span className="text-xs text-gray-400">{reply.created}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        }
-      </div>
-    </div>
-  );
-}
-
-const sorter = [
-  { label: "Hot", key: "hot" },
-  { label: "Recent", key: "recent" },
-  { label: "Top", key: "top" },
-];
-
-const emojiOptions = [
-  { label: "Roadwork", value: "🚧" },
-  { label: "Garbage", value: "🗑️" },
-  { label: "Light", value: "💡" },
-  { label: "Water", value: "🚰" },
-  { label: "Tree", value: "🌳" },
-  { label: "Animal", value: "🐕" },
-  { label: "Other", value: "💭" },
-];
-
-const defaultImages = [
-  "https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1517022812141-23620dba5c23?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?auto=format&fit=crop&w=600&q=80",
-];
-
 const Threads = () => {
   const [tab, setTab] = useState("hot");
   const [threads, setThreads] = useState(INITIAL_THREADS);
 
-  // Function to add thread, passed to AddThreadDialog
   function handleAddThread(newThread: any) {
     setThreads(ts => [newThread, ...ts]);
   }
@@ -264,14 +173,8 @@ const Threads = () => {
         ))}
         <span className="ml-auto text-sm text-gray-400">Community Threads</span>
       </div>
-      {/* Beautiful Add Thread Button/Modal */}
       <AddThreadDialog onAddThread={handleAddThread} />
-      {/* Thread List */}
-      <div className="mt-3">
-        {threads.map(thread => (
-          <ThreadCard thread={thread} key={thread.id} />
-        ))}
-      </div>
+      <ThreadList threads={threads} />
     </div>
   );
 };

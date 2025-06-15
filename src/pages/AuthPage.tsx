@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,13 +7,14 @@ import { useNavigate } from "react-router-dom";
 import useSession from "@/hooks/useSession";
 import ReturnHomeButton from "@/components/ReturnHomeButton";
 
-// You can use images from Unsplash's domain for illustrations
+// Unsplash images for visual appeal
 const images = [
   "photo-1488590528505-98d2b5aba04b",
   "photo-1581091226825-a6a2a5aee158",
   "photo-1649972904349-6e44c42644a7",
   "photo-1721322800607-8c38375eef04",
 ];
+
 const randomIndex = Math.floor(Math.random() * images.length);
 
 export default function AuthPage() {
@@ -22,31 +23,34 @@ export default function AuthPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
   const { user, loading: userLoading } = useSession();
 
-  // Only proceed to check redirect/login if session check has loaded
-  if (userLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-sky-100">
-        <span className="text-xl text-blue-700 font-semibold animate-pulse">Loading...</span>
-      </div>
-    );
-  }
-  if (user) {
-    navigate("/");
-    return null;
-  }
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!userLoading && user) {
+      navigate("/");
+    }
+  }, [user, userLoading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
+    if (!email || !password) {
+      setError("Email and password are required.");
+      setLoading(false);
+      return;
+    }
+
     try {
+      let authError: any = null;
+
       if (mode === "login") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        authError = error;
       } else {
         const redirectTo = `${window.location.origin}/`;
         const { error } = await supabase.auth.signUp({
@@ -54,19 +58,37 @@ export default function AuthPage() {
           password,
           options: { emailRedirectTo: redirectTo }
         });
-        if (error) throw error;
+        authError = error;
       }
-      setTimeout(() => navigate("/"), 400); // slight delay for session to refresh
+
+      if (authError) {
+        setError(authError.message ?? "Authentication failed.");
+        setLoading(false);
+        return;
+      }
+
+      // Slight delay to ensure session is set before redirection
+      setTimeout(() => {
+        navigate("/");
+      }, 600);
     } catch (err: any) {
-      setError(err.message || "Error");
-    } finally {
+      setError(err.message || "Something went wrong.");
       setLoading(false);
     }
   };
 
+  // Loading state while checking session
+  if (userLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-sky-100">
+        <span className="text-xl text-blue-700 font-semibold animate-pulse">Loading...</span>
+      </div>
+    );
+  }
+
+  // Show form only if not logged in
   return (
     <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-pink-100 via-purple-100 to-sky-100 relative overflow-hidden animate-fade-in">
-      {/* Cute ReturnHomeButton */}
       <ReturnHomeButton />
       <div className="w-full max-w-3xl mx-4 md:mx-0 flex flex-col md:flex-row bg-white/80 rounded-3xl shadow-xl border-4 border-pink-200 overflow-hidden">
         {/* Side image panel */}
@@ -117,7 +139,7 @@ export default function AuthPage() {
           <Button
             type="submit"
             disabled={loading}
-            className={`rounded-full bg-gradient-to-r from-blue-500 to-pink-500 text-white font-bold text-lg py-2 px-6 hover:scale-105 shadow-lg transition-all duration-200`}
+            className="rounded-full bg-gradient-to-r from-blue-500 to-pink-500 text-white font-bold text-lg py-2 px-6 hover:scale-105 shadow-lg transition-all duration-200"
           >
             {loading ? (
               <span className="animate-pulse">Please wait...</span>
@@ -132,7 +154,7 @@ export default function AuthPage() {
                 <button
                   type="button"
                   className="text-pink-600 font-bold underline underline-offset-2 hover:text-blue-500 transition-all"
-                  onClick={() => setMode("signup")}
+                  onClick={() => { setMode("signup"); setError(null); }}
                 >
                   Sign Up
                 </button>
@@ -143,7 +165,7 @@ export default function AuthPage() {
                 <button
                   type="button"
                   className="text-pink-600 font-bold underline underline-offset-2 hover:text-blue-500 transition-all"
-                  onClick={() => setMode("login")}
+                  onClick={() => { setMode("login"); setError(null); }}
                 >
                   Log In
                 </button>

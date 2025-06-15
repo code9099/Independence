@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -12,7 +11,7 @@ const getColorByComplaints = (count: number) => {
   return "#e5e7eb";                       // Gray/no data
 };
 
-const DELHI_GEOJSON_URL = "https://opendatadelhi.s3.ap-south-1.amazonaws.com/vidhan_sabha_constituencies.geojson";
+const DELHI_GEOJSON_URL = "/delhi_boundaries.geojson"; // Load from public directory
 
 const CivicHeatmap: React.FC = () => {
   const [geoJson, setGeoJson] = useState<any>(null);
@@ -27,17 +26,18 @@ const CivicHeatmap: React.FC = () => {
     console.log('[CivicHeatmap] Rendered');
   });
 
-  // Fetch GeoJSON on mount (don't block rendering if error)
+  // Fetch GeoJSON on mount
   useEffect(() => {
     axios.get(DELHI_GEOJSON_URL)
       .then(res => {
+        console.log('[CivicHeatmap] Loaded GeoJSON from', DELHI_GEOJSON_URL);
         setGeoJson(res.data);
         setGeoError(null);
       })
       .catch((err) => {
-        setGeoError("Could not load Delhi boundaries.");
+        setGeoError("Could not load Delhi boundaries (GeoJSON missing in /public).");
         setGeoJson(null);
-        console.error("GeoJSON load error:", err);
+        console.error("GeoJSON load error (local fallback):", err);
       });
   }, []);
 

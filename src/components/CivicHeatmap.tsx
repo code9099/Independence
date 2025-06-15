@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -13,6 +14,16 @@ const getColorByComplaints = (count: number) => {
 
 const DELHI_GEOJSON_URL = "/delhi_boundaries.geojson"; // Load from public directory
 
+// Utility to check if object is valid GeoJSON FeatureCollection
+function isValidGeoJson(obj: any) {
+  return (
+    obj &&
+    obj.type === "FeatureCollection" &&
+    Array.isArray(obj.features) &&
+    obj.features.length > 0
+  );
+}
+
 const CivicHeatmap: React.FC = () => {
   const [geoJson, setGeoJson] = useState<any>(null);
   const [heatmap, setHeatmap] = useState<any>({});
@@ -21,7 +32,6 @@ const CivicHeatmap: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [geoError, setGeoError] = useState<string | null>(null);
 
-  // Debug: log render
   useEffect(() => {
     console.log('[CivicHeatmap] Rendered');
   });
@@ -31,6 +41,7 @@ const CivicHeatmap: React.FC = () => {
     axios.get(DELHI_GEOJSON_URL)
       .then(res => {
         console.log('[CivicHeatmap] Loaded GeoJSON from', DELHI_GEOJSON_URL);
+        console.log('[CivicHeatmap] Loaded GeoJSON value:', res.data);
         setGeoJson(res.data);
         setGeoError(null);
       })
@@ -120,8 +131,8 @@ const CivicHeatmap: React.FC = () => {
           attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {/* Overlay GeoJSON only if present */}
-        {geoJson && (
+        {/* Only render GeoJSON if it is valid */}
+        {isValidGeoJson(geoJson) && (
           <GeoJSON
             key={JSON.stringify(heatmap) /* re-render for live updates */}
             data={geoJson}
@@ -195,3 +206,4 @@ const CivicHeatmap: React.FC = () => {
 };
 
 export default CivicHeatmap;
+

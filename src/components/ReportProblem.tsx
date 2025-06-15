@@ -1,7 +1,10 @@
 
 import React, { useState } from "react";
-import { Check, ArrowDown, ThumbsUp } from "lucide-react";
+import { Check, ArrowDown, ThumbsUp, MailCheck, MailX } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import useSession from "@/hooks/useSession";
 
 const DEPARTMENTS = [
   { name: "MCD", emoji: "🏛️", color: "bg-blue-100 text-blue-800" },
@@ -24,12 +27,26 @@ function getDeptForIssue(issue: string) {
   return DEPARTMENTS[0];
 }
 
+type EmailPopupInfo = null | {
+  success: boolean;
+  officerName?: string;
+  officerEmail?: string;
+  sentAt?: string;
+  status?: string;
+  error?: string;
+};
+
 const ReportProblem: React.FC = () => {
+  const { user } = useSession();
   const [selected, setSelected] = useState<string | null>("garbage");
   const [desc, setDesc] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [dept, setDept] = useState(DEPARTMENTS[0]);
   const [anim, setAnim] = useState(false);
+
+  // For email status dialog
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [emailPopup, setEmailPopup] = useState<EmailPopupInfo>(null);
 
   const handleSelect = (value: string) => {
     setSelected(value);
@@ -37,15 +54,68 @@ const ReportProblem: React.FC = () => {
     setDept(d);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
     setAnim(true);
+
+    // Build complaint payload
+    const complaintData: any = {
+      type: issues.find(x => x.value === selected)?.label || "Other",
+      description: desc,
+      department: dept.name,
+      constituency: "", // extend form to collect this if needed
+      reporter: user?.email || "anonymous",
+      submittedAt: new Date(),
+    };
+
+    let emailInfo: EmailPopupInfo = null;
+    try {
+      const res = await fetch("/api/issues", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(complaintData),
+      });
+      const json = await res.json();
+      if (json.emailStatus && json.emailLog) {
+        emailInfo = {
+          success: json.emailStatus.success,
+          officerName: dept.name + " Officer",
+          officerEmail: json.emailLog.to || "unknown",
+          sentAt: json.emailLog.sentAt
+            ? new Date(json.emailLog.sentAt).toLocaleString()
+            : undefined,
+          status: json.emailLog.status,
+          error: json.emailLog.error,
+        };
+      } else if (json.emailStatus) {
+        emailInfo = {
+          success: json.emailStatus.success,
+          officerName: dept.name + " Officer",
+          officerEmail: "unknown",
+          sentAt: undefined,
+          status: json.emailStatus.success ? "sent" : "failed",
+          error: json.emailStatus.error,
+        };
+      } else {
+        emailInfo = {
+          success: false,
+          error: "Unknown error sending email",
+        };
+      }
+    } catch (err: any) {
+      emailInfo = {
+        success: false,
+        error: err?.message || "Failed to send complaint",
+      };
+    }
     setTimeout(() => setAnim(false), 1200);
     setTimeout(() => setSubmitted(false), 2500);
     setDesc("");
     setSelected("garbage");
     setDept(DEPARTMENTS[0]);
+    setEmailPopup(emailInfo);
+    setDialogOpen(true);
   };
 
   return (
@@ -111,6 +181,66 @@ const ReportProblem: React.FC = () => {
       <div className="text-xs text-gray-400 pt-4 pb-2">
         <span className="font-medium">AI-powered auto-routing</span> <span aria-hidden>🤖</span>
       </div>
+      {/* Email status Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {emailPopup?.success
+                ? (<span className="flex items-center gap-2 text-green-700"><MailCheck className="w-5 h-5" /> Email Sent Successfully</span>)
+                : (<span className="flex items-center gap-2 text-red-700"><MailX className="w-5 h-5" /> Email Failed</span>)
+              }
+            </DialogTitle>
+            <DialogDescription>
+              {emailPopup?.success ? (
+                <div>
+                  <div className="text-md mb-2 text-blue-900">Complaint has been emailed to:</div>
+                  <div className="font-semibold flex items-center gap-5 mb-2">
+                    <span>{emailPopup.officerName}</span>
+                    <span className="text-xs text-gray-600">{emailPopup.officerEmail}</span>
+                  </div>
+                  <div className="text-xs text-gray-700 mb-2">
+                    <b>Sent At:</b> {emailPopup.sentAt || "Unknown"}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    <b>Status:</b> {emailPopup.status}
+                  </div>
+                  <div className="flex mt-4">
+                    <Button
+                      variant={"secondary"}
+                      onClick={() => {
+                        setDialogOpen(false);
+                        window.location.href = "/profile"; // or "/my-complaints"
+                      }}
+                    >
+                      Track Email
+                    </Button>
+                  </div>
+                  <div className="text-green-700 font-semibold mt-2">
+                    We’ve notified the responsible officer. You’ll be updated when action is taken.
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <div className="text-md text-red-800 mb-2 font-semibold">
+                    Email was not sent. Please try again or contact support.
+                  </div>
+                  {emailPopup?.error && (
+                    <div className="text-xs text-red-600 mb-2">
+                      Error: {emailPopup.error}
+                    </div>
+                  )}
+                </div>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => setDialogOpen(false)} className="w-full mt-2">
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -11,6 +11,7 @@ import AuthPage from "./pages/AuthPage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
 import ReportProblemPage from "./pages/ReportProblemPage";
+import HeatmapPage from "./pages/HeatmapPage";
 import useSession from "@/hooks/useSession";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/report" element={<ReportProblemPage />} />
           <Route path="/threads" element={<ThreadsPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
+          <Route path="/heatmap" element={<HeatmapPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<SettingsPage />} />

@@ -53,13 +53,15 @@ export default function ProfilePage() {
   if (!user) return <div className="p-8 text-red-500">You are not logged in.</div>;
 
   return (
-    <div className="max-w-lg mx-auto my-12 p-8 bg-white/70 rounded-2xl shadow-md border border-blue-100 flex flex-col gap-6">
-      <h2 className="font-black text-3xl text-blue-900 mb-2">My Profile</h2>
-      <div>
+    <div className="max-w-lg mx-auto my-12 p-8 bg-white/70 rounded-2xl shadow-md border border-blue-100 flex flex-col gap-6 animate-fade-in flair-wave spin-in">
+      <h2 className="font-black text-3xl text-blue-900 mb-2 crazy-bounce">
+        My Profile
+      </h2>
+      <div className="swing-in">
         <label className="block font-bold mb-1">Email</label>
         <div className="bg-gray-100 rounded-md px-4 py-2">{user.email}</div>
       </div>
-      <form onSubmit={saveProfile} className="flex flex-col gap-4">
+      <form onSubmit={saveProfile} className="flex flex-col gap-4 animate-stagger">
         <label className="block font-bold">Username</label>
         <Input
           placeholder="Enter your username"

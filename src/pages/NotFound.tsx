@@ -1,4 +1,3 @@
-
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import ReturnHomeButton from "@/components/ReturnHomeButton";
@@ -14,12 +13,12 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 relative">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 relative animate-fade-in crazy-bounce spin-in">
       <ReturnHomeButton />
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
+      <div className="text-center swing-in flair-wave">
+        <h1 className="text-4xl font-bold mb-4 crazy-bounce">404</h1>
+        <p className="text-xl text-gray-600 mb-4 animate-bounce">Oops! Page not found</p>
+        <a href="/" className="text-blue-500 hover:text-blue-700 underline spin-in">
           Return to Home
         </a>
       </div>

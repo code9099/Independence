@@ -14,8 +14,8 @@ const LeaderboardPage = () => {
   const selectedCon = constituencies?.find((c: any) => String(c.id) === String(selectedConId));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-fuchsia-900 to-pink-900 pt-10 pb-20 flex flex-col items-center">
-      <div className="w-full max-w-2xl bg-white/90 rounded-3xl shadow-xl p-8 mb-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-fuchsia-900 to-pink-900 pt-10 pb-20 flex flex-col items-center animate-fade-in crazy-bounce">
+      <div className="w-full max-w-2xl bg-white/90 rounded-3xl shadow-xl p-8 mb-8 flair-wave swing-in">
         <div className="flex justify-between items-center mb-3">
           <h1 className="font-extrabold text-2xl text-blue-800">Delhi Constituency Leaderboard</h1>
           <Link to="/heatmap">
@@ -42,7 +42,9 @@ const LeaderboardPage = () => {
         )}
         {/* Here you could show constituency-wise contribution stats */}
       </div>
-      <LeaderboardShowcase />
+      <div className="w-full max-w-2xl animate-stagger spin-in">
+        <LeaderboardShowcase />
+      </div>
     </div>
   );
 };

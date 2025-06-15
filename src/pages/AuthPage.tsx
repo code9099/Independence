@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -80,19 +79,19 @@ export default function AuthPage() {
   // Loading state while checking session
   if (userLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-sky-100">
-        <span className="text-xl text-blue-700 font-semibold animate-pulse">Loading...</span>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-sky-100 spin-in flair-wave">
+        <span className="text-xl text-blue-700 font-semibold animate-pulse crazy-bounce">Loading...</span>
       </div>
     );
   }
 
   // Show form only if not logged in
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-pink-100 via-purple-100 to-sky-100 relative overflow-hidden animate-fade-in">
+    <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-pink-100 via-purple-100 to-sky-100 relative overflow-hidden animate-fade-in spin-in flair-wave">
       <ReturnHomeButton />
-      <div className="w-full max-w-3xl mx-4 md:mx-0 flex flex-col md:flex-row bg-white/80 rounded-3xl shadow-xl border-4 border-pink-200 overflow-hidden">
+      <div className="w-full max-w-3xl mx-4 md:mx-0 flex flex-col md:flex-row bg-white/80 rounded-3xl shadow-xl border-4 border-pink-200 overflow-hidden crazy-bounce">
         {/* Side image panel */}
-        <div className="hidden md:flex flex-col justify-center items-center bg-gradient-to-b from-fuchsia-100 via-pink-100 to-blue-100 p-8 md:w-1/2 relative animate-scale-in">
+        <div className="hidden md:flex flex-col justify-center items-center bg-gradient-to-b from-fuchsia-100 via-pink-100 to-blue-100 p-8 md:w-1/2 relative animate-scale-in swing-in">
           <img
             src={`https://images.unsplash.com/${images[randomIndex]}?auto=format&fit=facearea&w=400&h=400&q=80`}
             alt="Login visual"
@@ -107,12 +106,12 @@ export default function AuthPage() {
         {/* Auth form panel */}
         <form
           onSubmit={handleSubmit}
-          className="flex-1 flex flex-col justify-center gap-5 p-8 md:p-16 bg-white/90 md:w-1/2"
+          className="flex-1 flex flex-col justify-center gap-5 p-8 md:p-16 bg-white/90 md:w-1/2 animate-stagger"
         >
-          <h1 className="font-black text-4xl mb-2 text-center text-pink-700 animate-fade-in-2">
+          <h1 className="font-black text-4xl mb-2 text-center text-pink-700 crazy-bounce">
             {mode === "login" ? "Log In" : "Create Account"}
           </h1>
-          <div className="flex justify-center mb-2">
+          <div className="flex justify-center mb-2 swing-in">
             <span className="text-3xl animate-bounce">🦄</span>
           </div>
           <Input
@@ -181,10 +180,10 @@ export default function AuthPage() {
       </div>
       {/* Floating background hearts/cute shapes */}
       <div className="pointer-events-none absolute top-8 left-1/2 -translate-x-1/2 flex flex-col gap-2 z-0">
-        <span className="text-pink-300 text-6xl animate-bounce-slow" style={{ animationDelay: "200ms" }}>💗</span>
+        <span className="text-pink-300 text-6xl animate-bounce-slow flair-wave">💗</span>
       </div>
-      <div className="pointer-events-none absolute bottom-10 left-10 text-purple-200 text-7xl animate-bounce-slow" style={{ animationDelay: "800ms" }}>🫧</div>
-      <div className="pointer-events-none absolute bottom-8 right-8 text-blue-200 text-8xl animate-bounce-slow" style={{ animationDelay: "500ms" }}>✨</div>
+      <div className="pointer-events-none absolute bottom-10 left-10 text-purple-200 text-7xl animate-bounce-slow swing-in" style={{ animationDelay: "800ms" }}>🫧</div>
+      <div className="pointer-events-none absolute bottom-8 right-8 text-blue-200 text-8xl animate-bounce-slow crazy-bounce" style={{ animationDelay: "500ms" }}>✨</div>
     </div>
   );
 }

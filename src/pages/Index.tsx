@@ -68,11 +68,11 @@ const Index = () => {
   if (!loading && user) {
     return (
       <SidebarProvider>
-        <div className="min-h-screen flex w-full bg-background">
+        <div className="min-h-screen flex w-full bg-background spin-in">
           <AppSidebar onLogout={handleLogout} />
           <SidebarInset>
             {/* NAVBAR */}
-            <header className="w-full flex items-center justify-between py-3 px-5 md:px-10 fixed z-20 top-0 left-0 h-20 bg-white/60 backdrop-blur-lg border-b border-blue-200/40 shadow-xl animate-fade-in rounded-b-2xl">
+            <header className="w-full flex items-center justify-between py-3 px-5 md:px-10 fixed z-20 top-0 left-0 h-20 bg-white/60 backdrop-blur-lg border-b border-blue-200/40 shadow-xl animate-fade-in rounded-b-2xl crazy-bounce">
               {/* Left: Logo & Brand */}
               <div className="flex items-center gap-3">
                 <span className="inline-block bg-gradient-to-r from-blue-600 to-pink-400 text-white px-4 py-2 rounded-2xl shadow-md text-2xl font-extrabold tracking-tight drop-shadow-lg hover:scale-105 transition-transform hover:bg-pink-400/80">
@@ -110,11 +110,13 @@ const Index = () => {
                 <ProfileMenu />
               </div>
             </header>
-            <main className="flex flex-1 pt-28 px-6 md:px-12 xl:px-32 gap-8 w-full transition-all duration-300 flex-col">
+            <main className="flex flex-1 pt-28 px-6 md:px-12 xl:px-32 gap-8 w-full transition-all duration-300 flex-col animate-stagger flair-wave">
               {/* Officer/MLA Details Card */}
-              <OfficerDetailsCard constituency="New Delhi" />
+              <div className="crazy-bounce">
+                <OfficerDetailsCard constituency="New Delhi" />
+              </div>
               {/* Report a Problem Button */}
-              <div className="flex justify-center mb-6">
+              <div className="flex justify-center mb-6 crazy-bounce">
                 <button
                   onClick={() => navigate("/report")}
                   className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-pink-400 text-white rounded-2xl shadow-lg font-bold text-lg hover:scale-105 transition transform hover:bg-pink-500 focus:outline-none"
@@ -124,13 +126,13 @@ const Index = () => {
               </div>
               {/* NEW: My Complaints Section (if user) */}
               {user && (
-                <MyComplaints />
+                <div className="swing-in"><MyComplaints /></div>
               )}
               <div className="flex gap-8 w-full">
                 {/* Center: Civic Issue Activity & Threads */}
-                <section className="flex-1 max-w-3xl mx-auto flex flex-col gap-8">
+                <section className="flex-1 max-w-3xl mx-auto flex flex-col gap-8 animate-stagger">
                   {/* Issues Activity Board */}
-                  <div>
+                  <div className="flair-wave">
                     <h2 className="font-semibold text-2xl text-blue-900 mb-2 flex items-center gap-2">
                       Live Civic Issues
                     </h2>
@@ -141,17 +143,17 @@ const Index = () => {
                     </div>
                   </div>
                   {/* Community Threads */}
-                  <div className="pt-4">
+                  <div className="pt-4 spin-in">
                     <Threads />
                   </div>
                 </section>
                 {/* Right: Leaderboard */}
-                <aside className="hidden xl:flex flex-col w-[300px] shrink-0 pt-0 sticky top-28 self-start animate-fade-in">
+                <aside className="hidden xl:flex flex-col w-[300px] shrink-0 pt-0 sticky top-28 self-start animate-fade-in crazy-bounce">
                   <Leaderboard />
                 </aside>
               </div>
             </main>
-            <footer className="mt-16 py-8 px-4 text-xs text-center text-muted-foreground bg-transparent">
+            <footer className="mt-16 py-8 px-4 text-xs text-center text-muted-foreground bg-transparent animate-fade-in swing-in">
               &copy; {new Date().getFullYear()} JanConnect &middot; Civic Tech for All
             </footer>
           </SidebarInset>
@@ -162,9 +164,9 @@ const Index = () => {
 
   // Default layout if not logged in:
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background spin-in">
       {/* GEN Z NAVBAR */}
-      <header className="w-full flex items-center justify-between py-3 px-5 md:px-10 fixed z-20 top-0 left-0 h-20 bg-white/60 backdrop-blur-lg border-b border-blue-200/40 shadow-xl animate-fade-in rounded-b-2xl">
+      <header className="w-full flex items-center justify-between py-3 px-5 md:px-10 fixed z-20 top-0 left-0 h-20 bg-white/60 backdrop-blur-lg border-b border-blue-200/40 shadow-xl animate-fade-in swing-in rounded-b-2xl">
         {/* Left: Logo & Brand */}
         <div className="flex items-center gap-3">
           <span className="inline-block bg-gradient-to-r from-blue-600 to-pink-400 text-white px-4 py-2 rounded-2xl shadow-md text-2xl font-extrabold tracking-tight drop-shadow-lg hover:scale-105 transition-transform hover:bg-pink-400/80">
@@ -207,11 +209,13 @@ const Index = () => {
           </button>
         </div>
       </header>
-      <main className="flex flex-1 pt-28 px-6 md:px-12 xl:px-32 gap-8 w-full transition-all duration-300 flex-col">
+      <main className="flex flex-1 pt-28 px-6 md:px-12 xl:px-32 gap-8 w-full transition-all duration-300 flex-col animate-stagger">
         {/* Officer/MLA Details Card */}
-        <OfficerDetailsCard constituency="New Delhi" />
+        <div className="crazy-bounce">
+          <OfficerDetailsCard constituency="New Delhi" />
+        </div>
         {/* Report a Problem Button */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-6 crazy-bounce">
           <button
             onClick={() => navigate("/report")}
             className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-pink-400 text-white rounded-2xl shadow-lg font-bold text-lg hover:scale-105 transition transform hover:bg-pink-500 focus:outline-none"
@@ -221,9 +225,9 @@ const Index = () => {
         </div>
         <div className="flex gap-8 w-full">
           {/* Center: Civic Issue Activity & Threads */}
-          <section className="flex-1 max-w-3xl mx-auto flex flex-col gap-8">
+          <section className="flex-1 max-w-3xl mx-auto flex flex-col gap-8 animate-stagger">
             {/* Issues Activity Board */}
-            <div>
+            <div className="flair-wave">
               <h2 className="font-semibold text-2xl text-blue-900 mb-2 flex items-center gap-2">
                 Live Civic Issues
               </h2>
@@ -234,17 +238,17 @@ const Index = () => {
               </div>
             </div>
             {/* Community Threads */}
-            <div className="pt-4">
+            <div className="pt-4 spin-in">
               <Threads />
             </div>
           </section>
           {/* Right: Leaderboard */}
-          <aside className="hidden xl:flex flex-col w-[300px] shrink-0 pt-0 sticky top-28 self-start animate-fade-in">
+          <aside className="hidden xl:flex flex-col w-[300px] shrink-0 pt-0 sticky top-28 self-start animate-fade-in crazy-bounce">
             <Leaderboard />
           </aside>
         </div>
       </main>
-      <footer className="mt-16 py-8 px-4 text-xs text-center text-muted-foreground bg-transparent">
+      <footer className="mt-16 py-8 px-4 text-xs text-center text-muted-foreground bg-transparent animate-fade-in swing-in">
         &copy; {new Date().getFullYear()} JanConnect &middot; Civic Tech for All
       </footer>
     </div>

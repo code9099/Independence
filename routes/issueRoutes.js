@@ -1,14 +1,33 @@
-
 const express = require('express');
 const router = express.Router();
 const Issue = require('../models/Issue');
+const { submitToOfficialPortal } = require("../services/portalSubmitter");
 
-// Create new issue
-router.post('/', async (req, res) => {
+// Create new issue WITH auto-forward
+router.post("/", async (req, res) => {
   try {
     const issue = new Issue(req.body);
+
+    // Auto-submit to government portal (async, waits for reference)
+    let portalResult = null;
+    try {
+      portalResult = await submitToOfficialPortal(issue);
+      if (portalResult?.reference) {
+        issue.referenceNumber = portalResult.reference;
+        issue.status = "Pending"; // Optionally update based on portal's state
+      }
+    } catch (err) {
+      // Fallback if portal submission fails
+      console.error("Portal submission failed:", err.message);
+      portalResult = { success: false, error: err.message };
+    }
+
     await issue.save();
-    res.status(201).json(issue);
+
+    res.status(201).json({
+      ...issue.toObject(),
+      portalSubmission: portalResult,
+    });
   } catch (e) {
     res.status(400).json({ error: e.message });
   }

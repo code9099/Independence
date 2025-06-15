@@ -9,6 +9,7 @@ import useSession from "@/hooks/useSession";
 import MyComplaints from "@/components/MyComplaints";
 import AppSidebar from "@/components/AppSidebar";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import ProfileMenu from "@/components/ProfileMenu";
 
 // Remove id fields from mockIssues
 const mockIssues: IssueCardProps[] = [
@@ -102,9 +103,10 @@ const Index = () => {
                   )
                 )}
               </nav>
-              {/* Right: Actions (Dark Mode) */}
+              {/* Right: Actions (Dark Mode + Profile Dropdown) */}
               <div className="flex items-center gap-2 md:gap-4">
                 <DarkModeToggle />
+                <ProfileMenu /> {/* Add the dropdown here for logged-in users */}
               </div>
             </header>
             <main className="flex flex-1 pt-28 px-6 md:px-12 xl:px-32 gap-8 w-full transition-all duration-300 flex-col">
@@ -191,7 +193,7 @@ const Index = () => {
             )
           )}
         </nav>
-        {/* Right: Actions (Dark Mode) */}
+        {/* Right: Actions (Dark Mode Only) */}
         <div className="flex items-center gap-2 md:gap-4">
           <DarkModeToggle />
         </div>

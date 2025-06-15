@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const issueRoutes = require('./routes/issueRoutes');
 const threadRoutes = require('./routes/threadRoutes');
 const heatmapRoutes = require('./routes/heatmapRoutes');
+const officerRoutes = require('./routes/officerRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -26,6 +27,7 @@ db.once('open', () => { console.log('Connected to MongoDB!'); });
 app.use('/api/issues', issueRoutes);
 app.use('/api/threads', threadRoutes);
 app.use('/api/heatmap-data', heatmapRoutes);
+app.use('/api/officers', officerRoutes);
 
 // Health check
 app.get('/', (req, res) => res.send('JanConnect API running!'));

@@ -1,11 +1,22 @@
 
 import React, { useState } from "react";
-import { ArrowUp, ArrowDown } from "lucide-react";
+import { ArrowUp, ArrowDown, Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+// Modal imports
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const emojiPicker = ["👍", "😂", "🔥", "😢", "👏", "🤔", "💯"];
 
@@ -235,9 +246,15 @@ const Threads = () => {
   });
   const [submitting, setSubmitting] = useState(false);
 
+  const [open, setOpen] = useState(false); // controls dialog/modal open state
+
   function handleInput(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value } = e.target;
     setForm(f => ({ ...f, [name]: value }));
+  }
+
+  function handleEmojiPick(val: string) {
+    setForm(f => ({ ...f, emoji: val }));
   }
 
   function handleAddThread(e: React.FormEvent) {
@@ -245,7 +262,6 @@ const Threads = () => {
     if (!form.title.trim()) return;
     setSubmitting(true);
 
-    // Demo avatar for user if not provided; could be improved
     const avatar =
       form.avatar ||
       `https://i.pravatar.cc/38?u=${encodeURIComponent(form.user || form.title)}`;
@@ -278,10 +294,17 @@ const Threads = () => {
       image: "",
     });
     setSubmitting(false);
+    setOpen(false); // close dialog after submission
   }
 
+  // Floating action button (FAB) styles for mobile
+  const fabButton =
+    "fixed z-30 bottom-5 right-5 md:static md:relative p-0 m-0 group";
+  const fabIcon =
+    "bg-gradient-to-tr from-blue-700 via-fuchsia-500 to-pink-500 rounded-full w-16 h-16 flex items-center justify-center shadow-lg text-white text-2xl hover:scale-110 focus:scale-105 transition-all duration-200 border-4 border-white md:w-11 md:h-11 md:text-lg";
+
   return (
-    <div className="w-full">
+    <div className="w-full relative">
       <div className="flex items-center gap-6 mb-2">
         {sorter.map(s => (
           <button
@@ -298,69 +321,112 @@ const Threads = () => {
         ))}
         <span className="ml-auto text-sm text-gray-400">Community Threads</span>
       </div>
-      {/* Add Thread Form */}
-      <div className="bg-white/90 dark:bg-muted/70 rounded-xl border border-blue-100 shadow-sm px-7 py-5 mb-5 animate-fade-in">
-        <form onSubmit={handleAddThread} className="flex flex-col md:flex-row md:items-end gap-3">
-          <div className="flex-1 flex flex-col gap-2">
-            <Label htmlFor="thread-title">Title</Label>
-            <Input
-              id="thread-title"
-              name="title"
-              placeholder="Ex: New civic issue in the area..."
-              value={form.title}
-              onChange={handleInput}
-              required
-              maxLength={120}
-              className="bg-blue-50"
-            />
-          </div>
-          <div className="flex flex-col gap-2 min-w-[100px]">
-            <Label htmlFor="emoji">Emoji</Label>
-            <select
-              id="emoji"
-              name="emoji"
-              value={form.emoji}
-              onChange={handleInput}
-              className="rounded-md border border-blue-300 bg-blue-50 py-2 px-3 text-lg"
-            >
-              {emojiOptions.map(e => (
-                <option value={e.value} key={e.value}>{e.value} {e.label}</option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-col gap-2 min-w-[120px]">
-            <Label htmlFor="image">Image URL</Label>
-            <Input
-              id="image"
-              name="image"
-              placeholder="Paste image link or leave blank"
-              value={form.image}
-              onChange={handleInput}
-              className="bg-blue-50"
-            />
-          </div>
-          <div className="flex flex-col gap-2 min-w-[120px]">
-            <Label htmlFor="user">Your Name</Label>
-            <Input
-              id="user"
-              name="user"
-              placeholder="Optional"
-              value={form.user}
-              onChange={handleInput}
-              className="bg-blue-50"
-            />
-          </div>
-          <Button
-            type="submit"
-            className="bg-gradient-to-tr from-blue-700 via-fuchsia-500 to-pink-500 text-white font-bold px-5 mt-3 md:mt-0"
-            disabled={submitting}
-          >
-            Add Thread
-          </Button>
-        </form>
+      {/* Add Thread Modal Button (FAB) */}
+      <div
+        className={fabButton}
+        aria-label="Add new thread"
+      >
+        {/* Modal trigger */}
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <button className={fabIcon} title="Start a new thread" type="button">
+              <Plus size={32} className="inline md:hidden" />
+              <span className="hidden md:inline font-bold px-4 py-2">+ New Thread</span>
+            </button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md w-full rounded-2xl shadow-2xl border bg-white/95 dark:bg-muted p-0 overflow-hidden">
+            <form onSubmit={handleAddThread}>
+              <DialogHeader className="px-5 pt-5 pb-1">
+                <DialogTitle className="flex items-center gap-2 text-blue-900 font-bold text-xl">
+                  <span className="text-2xl">{form.emoji}</span> Start a New Thread
+                </DialogTitle>
+                <DialogDescription className="mt-1 text-xs text-blue-700">
+                  Share your civic concern or question with everyone in your locality.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col gap-4 px-5 py-3">
+                <div>
+                  <Label htmlFor="thread-title" className="text-md font-semibold">Title</Label>
+                  <Input
+                    id="thread-title"
+                    name="title"
+                    placeholder="Ex: New civic issue in the area..."
+                    value={form.title}
+                    onChange={handleInput}
+                    required
+                    maxLength={100}
+                    autoFocus
+                    className="bg-blue-50 font-semibold mt-1"
+                  />
+                  <span className="text-xs text-gray-400">{form.title.length}/100</span>
+                </div>
+                <div>
+                  <Label htmlFor="emoji" className="font-semibold">Type</Label>
+                  <div className="flex gap-2 mt-2 flex-wrap">
+                    {emojiOptions.map(opt => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        className={cn(
+                          "text-xl p-2 rounded-full border transition hover:scale-125 hover:bg-blue-100 focus:bg-blue-200 focus:border-blue-400 outline-none",
+                          form.emoji === opt.value ? "bg-blue-50 border-blue-400 scale-110 ring ring-blue-200" : "border-gray-200"
+                        )}
+                        aria-label={opt.label}
+                        tabIndex={0}
+                        onClick={() => handleEmojiPick(opt.value)}
+                      >
+                        {opt.value}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="image" className="font-semibold">Image URL (optional)</Label>
+                  <Input
+                    id="image"
+                    name="image"
+                    placeholder="Paste image link or leave blank"
+                    value={form.image}
+                    onChange={handleInput}
+                    className="bg-blue-50"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="user" className="font-semibold">Your Name</Label>
+                  <Input
+                    id="user"
+                    name="user"
+                    placeholder="Anonymous"
+                    value={form.user}
+                    onChange={handleInput}
+                    className="bg-blue-50"
+                  />
+                </div>
+              </div>
+              <DialogFooter className="flex w-full px-5 py-4 bg-blue-50/70 dark:bg-muted/30 rounded-b-2xl">
+                <Button
+                  type="submit"
+                  className="w-full bg-gradient-to-tr from-blue-700 via-fuchsia-500 to-pink-500 text-white font-bold px-5 text-lg"
+                  disabled={submitting}
+                >
+                  {submitting ? "Posting..." : "Post Thread"}
+                </Button>
+              </DialogFooter>
+              <DialogClose asChild>
+                <button
+                  type="button"
+                  className="absolute top-4 right-4 text-gray-400 hover:text-blue-900 p-2 rounded-full outline-none transition"
+                  aria-label="Close"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </DialogClose>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
       {/* Thread List */}
-      <div>
+      <div className="mt-3">
         {threads.map(thread => (
           <ThreadCard thread={thread} key={thread.id} />
         ))}
@@ -370,3 +436,4 @@ const Threads = () => {
 };
 
 export default Threads;
+

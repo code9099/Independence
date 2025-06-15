@@ -1,4 +1,3 @@
-
 import { Home, Users, MessageCircle } from "lucide-react";
 import ReportProblem from "@/components/ReportProblem";
 import Leaderboard from "@/components/Leaderboard";
@@ -103,7 +102,7 @@ const Index = () => {
                   )
                 )}
               </nav>
-              {/* Right: Actions (Remove dropdown/profile btn, only dark mode toggle) */}
+              {/* Right: Actions (Dark Mode) */}
               <div className="flex items-center gap-2 md:gap-4">
                 <DarkModeToggle />
               </div>
@@ -192,16 +191,9 @@ const Index = () => {
             )
           )}
         </nav>
-        {/* Right: Actions (Dark Mode + Login avatar btn) */}
+        {/* Right: Actions (Dark Mode) */}
         <div className="flex items-center gap-2 md:gap-4">
           <DarkModeToggle />
-          <a href="/auth">
-            <button className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-pink-400 hover:scale-105 focus:ring-2 ring-pink-300 transition shadow-md bg-gradient-to-br from-blue-200 to-pink-200 flex items-center justify-center">
-              <span role="img" aria-label="avatar" className="text-xl">
-                🦄
-              </span>
-            </button>
-          </a>
         </div>
       </header>
       <main className="flex flex-1 pt-28 px-6 md:px-12 xl:px-32 gap-8 w-full transition-all duration-300 flex-col">

@@ -1,11 +1,6 @@
 
-import useSession from "@/hooks/useSession";
-
 export default function SettingsPage() {
-  const { user, loading } = useSession();
-  if (loading) return <div className="p-8">Loading...</div>;
-  if (!user) return <div className="p-8 text-red-500">You are not logged in.</div>;
-
+  // Always show settings page since we're assuming user is logged in
   return (
     <div className="max-w-lg mx-auto my-12 p-8 bg-white/70 rounded-2xl shadow-md border border-blue-100 animate-fade-in spin-in crazy-bounce">
       <h2 className="font-black text-3xl text-blue-900 mb-6 flair-wave">

@@ -1,6 +1,6 @@
+
 import { useEffect, useState } from "react";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import useSession from "@/hooks/useSession";
 
 interface Complaint {
   _id: string;

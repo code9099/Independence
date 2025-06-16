@@ -2,20 +2,11 @@
 import { Link, useNavigate } from "react-router-dom";
 import { LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import useSession from "@/hooks/useSession";
-import { supabase } from "@/integrations/supabase/client";
 
 export default function ProfileButton() {
-  const { user, loading } = useSession();
   const navigate = useNavigate();
 
-  if (loading) {
-    return null;
-  }
-
-  if (!user) return null;
-
-  // For now, show a generic user icon & logout
+  // Always show profile button since we're assuming user is logged in
   return (
     <div className="flex items-center gap-2">
       <Link
@@ -29,9 +20,9 @@ export default function ProfileButton() {
       <Button
         variant="ghost"
         className="px-2 py-1"
-        onClick={async () => {
-          await supabase.auth.signOut();
-          navigate("/auth");
+        onClick={() => {
+          // Since no real logout, just go to home for "logout"
+          navigate("/");
         }}
       >
         <LogOut className="mr-2" /> Logout

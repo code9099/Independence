@@ -4,7 +4,9 @@ import { Check, ArrowDown, ThumbsUp, MailCheck, MailX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import useSession from "@/hooks/useSession";
+
+// Assume a default "always-logged-in" user
+const DEFAULT_EMAIL = "user@janconnect.com";
 
 const DEPARTMENTS = [
   { name: "MCD", emoji: "🏛️", color: "bg-blue-100 text-blue-800" },
@@ -37,7 +39,6 @@ type EmailPopupInfo = null | {
 };
 
 const ReportProblem: React.FC = () => {
-  const { user } = useSession();
   const [selected, setSelected] = useState<string | null>("garbage");
   const [desc, setDesc] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -59,13 +60,13 @@ const ReportProblem: React.FC = () => {
     setSubmitted(true);
     setAnim(true);
 
-    // Build complaint payload
+    // Build complaint payload using default email
     const complaintData: any = {
       type: issues.find(x => x.value === selected)?.label || "Other",
       description: desc,
       department: dept.name,
       constituency: "", // extend form to collect this if needed
-      reporter: user?.email || "anonymous",
+      reporter: DEFAULT_EMAIL,
       submittedAt: new Date(),
     };
 
@@ -217,7 +218,7 @@ const ReportProblem: React.FC = () => {
                     </Button>
                   </div>
                   <div className="text-green-700 font-semibold mt-2">
-                    We’ve notified the responsible officer. You’ll be updated when action is taken.
+                    We've notified the responsible officer. You'll be updated when action is taken.
                   </div>
                 </div>
               ) : (

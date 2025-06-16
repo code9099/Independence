@@ -1,24 +1,15 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
-interface User {
-  _id: string;
-  name: string;
-  email: string;
-  phone: string;
-  ward: string;
-  constituency: string;
-  deviceId?: string;
-  isVerified: boolean;
-  createdAt: string;
-}
+import { supabase } from '@/integrations/supabase/client';
+import { User, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
   user: User | null;
-  token: string | null;
+  session: Session | null;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  loginWithGoogle: () => Promise<{ success: boolean; error?: string }>;
   register: (userData: RegisterData) => Promise<{ success: boolean; error?: string }>;
-  logout: () => void;
+  logout: () => Promise<void>;
   loading: boolean;
 }
 
@@ -48,44 +39,44 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user data from localStorage on app start
   useEffect(() => {
-    const savedToken = localStorage.getItem('janconnect_token');
-    const savedUser = localStorage.getItem('janconnect_user');
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }
+    );
 
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
-    }
-    setLoading(false);
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
+      console.log('Attempting login with email:', email);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        return { success: false, error: data.error };
+      if (error) {
+        console.error('Login error:', error);
+        return { success: false, error: error.message };
       }
 
-      // Save to localStorage and state
-      localStorage.setItem('janconnect_token', data.token);
-      localStorage.setItem('janconnect_user', JSON.stringify(data.user));
-      
-      setToken(data.token);
-      setUser(data.user);
-
+      console.log('Login successful:', data.user?.email);
       return { success: true };
     } catch (error) {
       console.error('Login error:', error);
@@ -93,29 +84,52 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const register = async (userData: RegisterData) => {
+  const loginWithGoogle = async () => {
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
+      console.log('Attempting Google login');
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`
+        }
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        return { success: false, error: data.error };
+      if (error) {
+        console.error('Google login error:', error);
+        return { success: false, error: error.message };
       }
 
-      // Save to localStorage and state
-      localStorage.setItem('janconnect_token', data.token);
-      localStorage.setItem('janconnect_user', JSON.stringify(data.user));
-      
-      setToken(data.token);
-      setUser(data.user);
+      return { success: true };
+    } catch (error) {
+      console.error('Google login error:', error);
+      return { success: false, error: 'Network error. Please try again.' };
+    }
+  };
 
+  const register = async (userData: RegisterData) => {
+    try {
+      console.log('Attempting registration with email:', userData.email);
+      const { data, error } = await supabase.auth.signUp({
+        email: userData.email,
+        password: userData.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            name: userData.name,
+            phone: userData.phone,
+            ward: userData.ward,
+            constituency: userData.constituency,
+            deviceId: userData.deviceId
+          }
+        }
+      });
+
+      if (error) {
+        console.error('Registration error:', error);
+        return { success: false, error: error.message };
+      }
+
+      console.log('Registration successful:', data.user?.email);
       return { success: true };
     } catch (error) {
       console.error('Registration error:', error);
@@ -123,17 +137,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('janconnect_token');
-    localStorage.removeItem('janconnect_user');
-    setToken(null);
-    setUser(null);
+  const logout = async () => {
+    try {
+      console.log('Logging out');
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Logout error:', error);
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   const value = {
     user,
-    token,
+    session,
     login,
+    loginWithGoogle,
     register,
     logout,
     loading,

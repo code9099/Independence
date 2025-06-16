@@ -3,7 +3,7 @@
  * Profile Button Component
  * 
  * Renders navigation buttons for Profile and Logout in the header.
- * Now integrated with JWT authentication system.
+ * Now integrated with Supabase authentication system.
  */
 
 import { Link } from "react-router-dom";
@@ -14,8 +14,8 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function ProfileButton() {
   const { logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     // User will be automatically redirected to auth page by ProtectedRoute
   };
 

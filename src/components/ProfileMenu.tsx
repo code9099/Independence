@@ -4,7 +4,7 @@
  * 
  * Dropdown menu triggered by clicking the user avatar.
  * Provides quick access to Profile, Settings, and Logout.
- * Now integrated with JWT authentication system.
+ * Now integrated with Supabase authentication system.
  */
 
 import { Link } from "react-router-dom";
@@ -15,10 +15,15 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function ProfileMenu() {
   const { user, logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     // User will be automatically redirected to auth page by ProtectedRoute
   };
+
+  // Get user's display name from metadata or email
+  const displayName = user?.user_metadata?.name || user?.email?.split('@')[0] || 'User';
+  const userEmail = user?.email || '';
+  const userConstituency = user?.user_metadata?.constituency || '';
 
   return (
     <DropdownMenu>
@@ -29,7 +34,7 @@ export default function ProfileMenu() {
         >
           {/* Display user's initials or emoji */}
           <span className="text-sm font-bold text-blue-900">
-            {user?.name ? user.name.charAt(0).toUpperCase() : '🦄'}
+            {displayName ? displayName.charAt(0).toUpperCase() : '🦄'}
           </span>
         </button>
       </DropdownMenuTrigger>
@@ -38,9 +43,11 @@ export default function ProfileMenu() {
       <DropdownMenuContent align="end" className="min-w-[200px]">
         {/* User info header */}
         <div className="px-2 py-1.5 text-sm text-gray-600">
-          <div className="font-medium">{user?.name}</div>
-          <div className="text-xs text-gray-500">{user?.email}</div>
-          <div className="text-xs text-gray-500">{user?.constituency}</div>
+          <div className="font-medium">{displayName}</div>
+          <div className="text-xs text-gray-500">{userEmail}</div>
+          {userConstituency && (
+            <div className="text-xs text-gray-500">{userConstituency}</div>
+          )}
         </div>
         
         <DropdownMenuSeparator />

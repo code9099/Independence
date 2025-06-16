@@ -10,12 +10,21 @@ const JWT_SECRET = process.env.JWT_SECRET || 'janconnect_secret_key';
 
 // Register new user
 router.post('/register', async (req, res) => {
+  console.log('Registration attempt:', { ...req.body, password: '[HIDDEN]' });
+  
   try {
     const { name, email, password, phone, ward, constituency, deviceId } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !password || !phone || !ward || !constituency) {
+      console.log('Missing required fields');
+      return res.status(400).json({ error: 'All fields except deviceId are required' });
+    }
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
+      console.log('User already exists:', email);
       return res.status(400).json({ error: 'User already exists with this email' });
     }
 
@@ -35,6 +44,7 @@ router.post('/register', async (req, res) => {
     });
 
     await user.save();
+    console.log('User created successfully:', email);
 
     // Generate JWT token
     const token = jwt.sign(
@@ -53,24 +63,32 @@ router.post('/register', async (req, res) => {
 
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ error: 'Failed to register user' });
+    res.status(500).json({ error: 'Failed to register user: ' + error.message });
   }
 });
 
 // Login user
 router.post('/login', async (req, res) => {
+  console.log('Login attempt:', req.body.email);
+  
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
 
     // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
+      console.log('User not found:', email);
       return res.status(400).json({ error: 'Invalid email or password' });
     }
 
     // Check password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
+      console.log('Invalid password for:', email);
       return res.status(400).json({ error: 'Invalid email or password' });
     }
 
@@ -80,6 +98,8 @@ router.post('/login', async (req, res) => {
       JWT_SECRET,
       { expiresIn: '7d' }
     );
+
+    console.log('Login successful:', email);
 
     // Return user data (without password) and token
     const { password: _, ...userWithoutPassword } = user.toObject();
@@ -91,7 +111,7 @@ router.post('/login', async (req, res) => {
 
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ error: 'Failed to login' });
+    res.status(500).json({ error: 'Failed to login: ' + error.message });
   }
 });
 

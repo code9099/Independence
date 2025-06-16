@@ -3,18 +3,22 @@
  * Profile Button Component
  * 
  * Renders navigation buttons for Profile and Logout in the header.
- * Uses React Router for navigation between pages.
+ * Now integrated with JWT authentication system.
  */
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function ProfileButton() {
-  const navigate = useNavigate();
+  const { logout } = useAuth();
 
-  // Always show profile button since we're assuming user is logged in
-  // In a real app, this would be conditionally rendered based on auth status
+  const handleLogout = () => {
+    logout();
+    // User will be automatically redirected to auth page by ProtectedRoute
+  };
+
   return (
     <div className="flex items-center gap-2">
       {/* Profile navigation link */}
@@ -27,18 +31,11 @@ export default function ProfileButton() {
         </Button>
       </Link>
       
-      {/* Logout button - currently just navigates to home */}
+      {/* Logout button */}
       <Button
         variant="ghost"
         className="px-2 py-1"
-        onClick={() => {
-          // Since no real logout functionality, just redirect to home
-          // In a real app, this would:
-          // 1. Clear user session/tokens
-          // 2. Call logout API
-          // 3. Redirect to login page
-          navigate("/");
-        }}
+        onClick={handleLogout}
       >
         <LogOut className="mr-2" /> Logout
       </Button>

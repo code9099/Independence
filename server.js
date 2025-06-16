@@ -1,3 +1,4 @@
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -8,6 +9,7 @@ const issueRoutes = require('./routes/issueRoutes');
 const threadRoutes = require('./routes/threadRoutes');
 const heatmapRoutes = require('./routes/heatmapRoutes');
 const officerRoutes = require('./routes/officerRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -24,6 +26,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => { console.log('Connected to MongoDB!'); });
 
 // Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/issues', issueRoutes);
 app.use('/api/threads', threadRoutes);
 app.use('/api/heatmap-data', heatmapRoutes);

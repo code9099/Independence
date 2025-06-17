@@ -15,6 +15,7 @@ import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
 import ReportProblemPage from "./pages/ReportProblemPage";
 import HeatmapPage from "./pages/HeatmapPage";
+import MyComplaintsPage from "./pages/MyComplaintsPage";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,11 @@ const App = () => (
             <Route path="/report" element={
               <ProtectedRoute>
                 <ReportProblemPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/my-complaints" element={
+              <ProtectedRoute>
+                <MyComplaintsPage />
               </ProtectedRoute>
             } />
             <Route path="/threads" element={

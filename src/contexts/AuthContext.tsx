@@ -73,6 +73,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (error) {
         console.error('Login error:', error);
+        if (error.message.includes('Email not confirmed')) {
+          return { success: false, error: 'Please check your email and click the confirmation link before signing in.' };
+        }
         return { success: false, error: error.message };
       }
 
@@ -126,10 +129,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (error) {
         console.error('Registration error:', error);
+        if (error.message.includes('User already registered')) {
+          return { success: false, error: 'An account with this email already exists. Please try logging in instead.' };
+        }
         return { success: false, error: error.message };
       }
 
       console.log('Registration successful:', data.user?.email);
+      
+      // Check if user needs email confirmation
+      if (data.user && !data.session) {
+        return { 
+          success: true, 
+          error: 'Registration successful! Please check your email and click the confirmation link to complete your account setup.' 
+        };
+      }
+
       return { success: true };
     } catch (error) {
       console.error('Registration error:', error);

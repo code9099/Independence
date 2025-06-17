@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -83,9 +82,9 @@ const AuthPage = () => {
         title: "Google login failed",
         description: result.error || "Please try again.",
       });
+      setLoading(false);
     }
-    
-    setLoading(false);
+    // Don't set loading to false on success as user will be redirected
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -125,11 +124,19 @@ const AuthPage = () => {
     const result = await register(registerData);
 
     if (result.success) {
-      toast({
-        title: "Account created!",
-        description: "Welcome to JanConnect. Please check your email to verify your account.",
-      });
-      navigate('/');
+      if (result.error) {
+        // This is the email confirmation message
+        toast({
+          title: "Check your email!",
+          description: result.error,
+        });
+      } else {
+        toast({
+          title: "Account created!",
+          description: "Welcome to JanConnect!",
+        });
+        navigate('/');
+      }
     } else {
       toast({
         variant: "destructive",
@@ -183,7 +190,7 @@ const AuthPage = () => {
                       fill="#EA4335"
                     />
                   </svg>
-                  Continue with Google
+                  {loading ? 'Signing in...' : 'Continue with Google'}
                 </Button>
                 
                 <div className="relative">
@@ -253,7 +260,7 @@ const AuthPage = () => {
                       fill="#EA4335"
                     />
                   </svg>
-                  Sign up with Google
+                  {loading ? 'Creating account...' : 'Sign up with Google'}
                 </Button>
                 
                 <div className="relative">

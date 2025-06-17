@@ -1,29 +1,13 @@
 
-/**
- * Profile Menu Component
- * 
- * Dropdown menu triggered by clicking the user avatar.
- * Provides quick access to Profile, Settings, and Logout.
- * Now integrated with Supabase authentication system.
- */
-
 import { Link } from "react-router-dom";
-import { LogOut, User, Settings } from "lucide-react";
+import { User, Settings } from "lucide-react";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { useAuth } from "@/contexts/AuthContext";
 
 export default function ProfileMenu() {
-  const { user, logout } = useAuth();
-
-  const handleLogout = async () => {
-    await logout();
-    // User will be automatically redirected to auth page by ProtectedRoute
-  };
-
-  // Get user's display name from metadata or email
-  const displayName = user?.user_metadata?.name || user?.email?.split('@')[0] || 'User';
-  const userEmail = user?.email || '';
-  const userConstituency = user?.user_metadata?.constituency || '';
+  // Mock user data since authentication is removed
+  const displayName = "Demo User";
+  const userEmail = "demo@janconnect.com";
+  const userConstituency = "New Delhi";
 
   return (
     <DropdownMenu>
@@ -45,9 +29,7 @@ export default function ProfileMenu() {
         <div className="px-2 py-1.5 text-sm text-gray-600">
           <div className="font-medium">{displayName}</div>
           <div className="text-xs text-gray-500">{userEmail}</div>
-          {userConstituency && (
-            <div className="text-xs text-gray-500">{userConstituency}</div>
-          )}
+          <div className="text-xs text-gray-500">{userConstituency}</div>
         </div>
         
         <DropdownMenuSeparator />
@@ -64,17 +46,6 @@ export default function ProfileMenu() {
           <Link to="/settings" className="flex items-center gap-2">
             <Settings size={16} /> Settings
           </Link>
-        </DropdownMenuItem>
-        
-        {/* Visual separator */}
-        <DropdownMenuSeparator />
-        
-        {/* Logout action */}
-        <DropdownMenuItem
-          className="text-destructive focus:bg-destructive/20 focus:text-destructive"
-          onClick={handleLogout}
-        >
-          <LogOut size={16} className="mr-1" /> Logout
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

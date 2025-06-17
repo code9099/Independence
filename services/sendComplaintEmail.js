@@ -1,12 +1,8 @@
 
 const nodemailer = require("nodemailer");
 
-/**
- * Returns a nodemailer transporter, loading config from env or fallback values.
- * Environment variables: EMAIL_USERNAME, EMAIL_PASSWORD, SMTP_HOST, SMTP_PORT
- */
 function getTransporter() {
-  return nodemailer.createTransport({
+  return nodemailer.createTransporter({
     host: process.env.SMTP_HOST || "smtp.gmail.com",
     port: process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 587,
     secure: false,
@@ -17,56 +13,68 @@ function getTransporter() {
   });
 }
 
-// Fallback: Can be replaced with actual Mongo/DB fetch for prod!
-const DEPT_EMAILS = {
-  MCD: { email: "mcd.head@example.com", name: "MCD Officer" },
-  PWD: { email: "pwd.head@example.com", name: "PWD Officer" },
-  DJB: { email: "djb.head@example.com", name: "DJB Officer" }
-};
-
-const ADMIN_EMAIL = "support@janconnect.in";
-
-/**
- * Send civic complaint email to officer.
- * @param {Object} params Object incl. complaint, dept, departmentHead, image
- * @returns {Promise<{success: boolean, response: Object, error?: string}>}
- */
 async function sendComplaintEmail({ complaint, dept, departmentHead, imageBuffer, imageMimetype }) {
   const transporter = getTransporter();
-
-  const officer = departmentHead || DEPT_EMAILS[dept];
+  
+  const officer = departmentHead;
   const now = new Date();
   const formattedTime = now.toLocaleString("en-IN", {
     dateStyle: "long", timeStyle: "short"
   });
 
-  // Compose HTML Body
+  // Enhanced HTML with officer info
   const html = `
-    <div style="font-family:Arial,sans-serif">
-      <p>Dear <b>${officer.name || "Officer"}</b>,</p>
-      <p>
-        A new civic issue has been submitted via the <b>JanConnect Platform</b>.
-      </p>
-      <ul>
-        <li><b>📌 Complaint Type:</b> ${complaint.type || "N/A"}</li>
-        <li><b>🗺️ Location:</b> ${complaint.location || complaint.constituency || "N/A"}</li>
-        <li><b>🕓 Time:</b> ${formattedTime}</li>
-      </ul>
-      <p><b>📝 Description:</b><br />
-        ${complaint.description || "No details provided."}
-      </p>
-      ${imageBuffer ? `<img src="cid:complaint_image" style="max-width:400px;border-radius:8px;margin:12px 0">` : ""}
-      <p>We request you to take the required action at the earliest convenience.<br>The citizen has been notified and is expecting updates.</p>
-      <p style="color:gray;font-size:14px;margin-top:18px">— <b>JanConnect Civic Platform</b></p>
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;border:1px solid #e0e0e0;border-radius:8px;">
+      <div style="background:linear-gradient(135deg,#1e40af,#ec4899);color:white;padding:20px;border-radius:8px 8px 0 0;text-align:center;">
+        <h1 style="margin:0;font-size:24px;">New Civic Complaint</h1>
+        <p style="margin:5px 0 0 0;opacity:0.9;">JanConnect Civic Platform</p>
+      </div>
+      
+      <div style="padding:20px;background:#f8f9fa;">
+        <p style="margin:0 0 15px 0;font-size:16px;">Dear <strong>${officer?.name || `${dept} Officer`}</strong>,</p>
+        <p style="margin:0 0 20px 0;color:#666;line-height:1.6;">
+          A new civic issue has been submitted via the JanConnect Platform and has been assigned to you for resolution.
+        </p>
+        
+        <div style="background:white;padding:20px;border-radius:8px;border-left:4px solid #1e40af;">
+          <h3 style="margin:0 0 15px 0;color:#1e40af;">Complaint Details</h3>
+          <table style="width:100%;border-collapse:collapse;">
+            <tr><td style="padding:8px 0;border-bottom:1px solid #eee;"><strong>Complaint Type:</strong></td><td style="padding:8px 0;border-bottom:1px solid #eee;">${complaint.type || "N/A"}</td></tr>
+            <tr><td style="padding:8px 0;border-bottom:1px solid #eee;"><strong>Location:</strong></td><td style="padding:8px 0;border-bottom:1px solid #eee;">${complaint.location || complaint.constituency || "N/A"}</td></tr>
+            <tr><td style="padding:8px 0;border-bottom:1px solid #eee;"><strong>Department:</strong></td><td style="padding:8px 0;border-bottom:1px solid #eee;">${dept}</td></tr>
+            <tr><td style="padding:8px 0;border-bottom:1px solid #eee;"><strong>Submitted At:</strong></td><td style="padding:8px 0;border-bottom:1px solid #eee;">${formattedTime}</td></tr>
+            ${officer?.zone ? `<tr><td style="padding:8px 0;border-bottom:1px solid #eee;"><strong>Your Zone:</strong></td><td style="padding:8px 0;border-bottom:1px solid #eee;">${officer.zone}</td></tr>` : ''}
+          </table>
+        </div>
+        
+        <div style="background:white;padding:20px;border-radius:8px;margin-top:15px;">
+          <h4 style="margin:0 0 10px 0;color:#1e40af;">Description:</h4>
+          <p style="margin:0;line-height:1.6;color:#333;">${complaint.description || "No details provided."}</p>
+        </div>
+        
+        ${imageBuffer ? '<div style="margin:20px 0;text-align:center;"><img src="cid:complaint_image" style="max-width:100%;height:auto;border-radius:8px;border:1px solid #ddd;"></div>' : ""}
+        
+        <div style="background:#fff3cd;border:1px solid #ffeaa7;padding:15px;border-radius:8px;margin-top:20px;">
+          <p style="margin:0;color:#856404;"><strong>Action Required:</strong> Please review this complaint and take appropriate action as per departmental guidelines. The citizen has been notified and is expecting updates on the resolution progress.</p>
+        </div>
+        
+        <div style="margin-top:30px;padding-top:20px;border-top:1px solid #eee;text-align:center;">
+          <p style="margin:0;color:#666;font-size:14px;">This is an automated message from the JanConnect Civic Platform</p>
+          <p style="margin:5px 0 0 0;color:#999;font-size:12px;">For support, contact: support@janconnect.in</p>
+        </div>
+      </div>
+      
+      <div style="background:#1e40af;color:white;padding:15px;text-align:center;border-radius:0 0 8px 8px;">
+        <p style="margin:0;font-weight:bold;">— JanConnect Civic Platform</p>
+      </div>
     </div>
   `;
 
-  // Compose mail options
   const mailOptions = {
     from: process.env.EMAIL_USERNAME || 'no-reply@janconnect.org',
-    to: officer.email,
-    cc: ADMIN_EMAIL,
-    subject: `[New Civic Complaint] – ${complaint.type || "Civic Issue"} reported in ${complaint.location || complaint.constituency || "Delhi"}`,
+    to: officer?.email || `${dept.toLowerCase()}.officer@delhi.gov.in`,
+    cc: process.env.ADMIN_EMAIL || 'support@janconnect.in',
+    subject: `[JanConnect] New ${complaint.type || "Civic Issue"} - ${complaint.location || complaint.constituency || "Delhi"} (Action Required)`,
     html,
     attachments: imageBuffer ? [
       {

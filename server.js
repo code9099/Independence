@@ -1,73 +1,71 @@
 
+require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
-const bodyParser = require('body-parser');
-
-// Import routes
-const issueRoutes = require('./routes/issueRoutes');
-const threadRoutes = require('./routes/threadRoutes');
-const heatmapRoutes = require('./routes/heatmapRoutes');
-const officerRoutes = require('./routes/officerRoutes');
-const authRoutes = require('./routes/authRoutes');
-const testRoutes = require('./routes/testRoutes');
+const mongoose = require('mongoose');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
-app.use(bodyParser.json());
-
-// Debug middleware to log all requests
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.path} - ${new Date().toISOString()}`);
-  next();
-});
-
-// MongoDB connection
-mongoose.connect('mongodb://localhost:27017/janconnect', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => { 
-  console.log('Connected to MongoDB!'); 
-});
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Routes
-app.use('/api/auth', authRoutes);
+const issueRoutes = require('./routes/issueRoutes');
+const testRoutes = require('./routes/testRoutes');
+
+// Mount routes with proper prefixes
 app.use('/api/issues', issueRoutes);
-app.use('/api/threads', threadRoutes);
-app.use('/api/heatmap-data', heatmapRoutes);
-app.use('/api/officers', officerRoutes);
 app.use('/api/test', testRoutes);
 
 // Health check
-app.get('/', (req, res) => res.send('JanConnect API running!'));
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'Server is running', timestamp: new Date() });
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(500).json({ error: 'Internal server error' });
+  console.error('Server Error:', err);
+  res.status(500).json({ 
+    success: false, 
+    message: 'Internal server error',
+    error: err.message 
+  });
 });
 
 // 404 handler
 app.use('*', (req, res) => {
-  console.log(`404 - Route not found: ${req.method} ${req.originalUrl}`);
-  res.status(404).json({ error: 'Route not found' });
+  console.log('404 - Route not found:', req.originalUrl);
+  res.status(404).json({ 
+    success: false, 
+    message: `Route ${req.originalUrl} not found` 
+  });
+});
+
+// MongoDB connection
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/janconnect', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => {
+  console.log('✅ Connected to MongoDB');
+  console.log('📡 Routes mounted:');
+  console.log('   - POST /api/issues (complaint submission)');
+  console.log('   - GET /api/issues (get complaints)');
+  console.log('   - GET /api/test/email-config');
+  console.log('   - POST /api/test/send-test-email');
+})
+.catch(err => {
+  console.error('❌ MongoDB connection error:', err);
+  process.exit(1);
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log('Available routes:');
-  console.log('- POST /api/auth/register');
-  console.log('- POST /api/auth/login');
-  console.log('- GET /api/auth/profile');
-  console.log('- GET /api/test/email-config');
-  console.log('- POST /api/test/send-test-email');
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📍 Health check: http://localhost:${PORT}/api/health`);
 });
-
-module.exports = app;

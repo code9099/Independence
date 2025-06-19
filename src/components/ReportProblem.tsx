@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Check, ArrowDown, ThumbsUp, MailCheck, MailX } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -83,12 +82,9 @@ const ReportProblem: React.FC = () => {
       });
 
       console.log('📡 Response status:', res.status);
-      console.log('📡 Response headers:', res.headers.get('content-type'));
       
-      // Check if response is JSON
-      const contentType = res.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        throw new Error('Server returned non-JSON response');
+      if (!res.ok) {
+        throw new Error(`Server error: ${res.status} ${res.statusText}`);
       }
 
       const json = await res.json();

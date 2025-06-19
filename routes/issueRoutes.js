@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const Issue = require('../models/Issue');
@@ -75,7 +74,7 @@ router.post("/", async (req, res) => {
         to: mapping.officer.email,
         status: emailStatus.success ? "sent" : "failed",
         error: emailStatus.success ? undefined : emailStatus.error,
-        messageId: emailStatus.response?.messageId,
+        messageId: emailStatus.messageId,
       };
       
       if (emailStatus.success) {
@@ -103,7 +102,7 @@ router.post("/", async (req, res) => {
     console.log('✅ Issue saved successfully:', issue._id);
 
     // Always return proper JSON response
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: "Complaint submitted successfully",
       issue: issue.toObject(),
@@ -116,7 +115,7 @@ router.post("/", async (req, res) => {
     console.error('❌ Error in complaint submission:', error);
     
     // Always return proper JSON error response
-    return res.status(500).json({ 
+    res.status(500).json({ 
       success: false, 
       message: "Failed to submit complaint",
       error: error.message 

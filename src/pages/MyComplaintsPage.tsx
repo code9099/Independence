@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
-import { Plus, FileText, Eye, Clock } from 'lucide-react';
+import { Plus, Search, Filter, Clock, FileText } from 'lucide-react';
 import ComplaintTimeline from '@/components/ComplaintTimeline';
+import ComplaintCard from '@/components/ComplaintCard';
 
 interface Complaint {
   _id: string;
@@ -39,6 +40,8 @@ export default function MyComplaintsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
     fetchComplaints();
@@ -63,27 +66,34 @@ export default function MyComplaintsPage() {
     setDialogOpen(true);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Resolved': return 'bg-green-100 text-green-800 border-green-200';
-      case 'In Progress': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'Pending': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
+  const filteredComplaints = complaints.filter(complaint => {
+    const matchesSearch = complaint.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         complaint.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         complaint.constituency?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === 'all' || complaint.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
+
+  const getStatusCounts = () => {
+    return {
+      all: complaints.length,
+      'Pending': complaints.filter(c => c.status === 'Pending').length,
+      'In Progress': complaints.filter(c => c.status === 'In Progress').length,
+      'Resolved': complaints.filter(c => c.status === 'Resolved').length,
+    };
   };
 
-  const getLatestUpdate = (timeline: any[]) => {
-    if (!timeline || timeline.length === 0) return "No updates";
-    const latest = timeline[timeline.length - 1];
-    return latest.stage;
-  };
+  const statusCounts = getStatusCounts();
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
+    <div className="max-w-7xl mx-auto p-6 space-y-6">
+      {/* Header */}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-blue-900">My Complaints</h1>
-          <p className="text-gray-600 mt-2">Track your submitted complaints and their status</p>
+          <p className="text-gray-600 mt-2">Track your submitted complaints and their progress</p>
         </div>
         <Button 
           onClick={() => navigate('/report')}
@@ -94,17 +104,61 @@ export default function MyComplaintsPage() {
         </Button>
       </div>
 
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {Object.entries(statusCounts).map(([status, count]) => (
+          <div 
+            key={status}
+            className={`bg-white rounded-lg border p-4 cursor-pointer transition-all hover:shadow-md ${
+              statusFilter === status ? 'ring-2 ring-blue-500' : ''
+            }`}
+            onClick={() => setStatusFilter(status)}
+          >
+            <div className="text-2xl font-bold text-gray-900">{count}</div>
+            <div className="text-sm text-gray-600 capitalize">
+              {status === 'all' ? 'Total' : status}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            placeholder="Search complaints..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <Button variant="outline" className="sm:w-auto">
+          <Filter className="mr-2 h-4 w-4" />
+          Filter
+        </Button>
+      </div>
+
+      {/* Loading State */}
       {loading ? (
         <div className="text-center py-12">
           <Clock className="mx-auto h-8 w-8 text-gray-400 animate-spin mb-4" />
           <p className="text-gray-600">Loading complaints...</p>
         </div>
-      ) : complaints.length === 0 ? (
-        <Card>
-          <CardContent className="text-center py-12">
-            <FileText className="mx-auto h-16 w-16 text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No complaints yet</h3>
-            <p className="text-gray-600 mb-6">You haven't submitted any complaints yet. Start making a difference in your community!</p>
+      ) : filteredComplaints.length === 0 ? (
+        /* Empty State */
+        <div className="text-center py-12 bg-white rounded-lg border">
+          <FileText className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            {complaints.length === 0 ? 'No complaints yet' : 'No matching complaints'}
+          </h3>
+          <p className="text-gray-600 mb-6">
+            {complaints.length === 0 
+              ? "You haven't submitted any complaints yet. Start making a difference!"
+              : "Try adjusting your search or filter criteria."
+            }
+          </p>
+          {complaints.length === 0 && (
             <Button 
               onClick={() => navigate('/report')}
               className="bg-gradient-to-r from-blue-600 to-pink-400 hover:from-blue-700 hover:to-pink-500"
@@ -112,76 +166,17 @@ export default function MyComplaintsPage() {
               <Plus className="mr-2 h-4 w-4" />
               Submit Your First Complaint
             </Button>
-          </CardContent>
-        </Card>
+          )}
+        </div>
       ) : (
+        /* Complaints Grid */
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {complaints.map((complaint) => (
-            <Card key={complaint._id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <CardTitle className="text-lg">{complaint.type}</CardTitle>
-                    <CardDescription className="mt-1 line-clamp-2">
-                      {complaint.description}
-                    </CardDescription>
-                  </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(complaint.status)}`}>
-                    {complaint.status}
-                  </span>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {/* Department & Officer Info */}
-                <div className="text-sm space-y-1">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Department:</span>
-                    <span className="font-medium">{complaint.department}</span>
-                  </div>
-                  {complaint.assignedOfficer && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Officer:</span>
-                      <span className="font-medium text-xs">{complaint.assignedOfficer.name}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Location:</span>
-                    <span className="font-medium">{complaint.constituency || 'N/A'}</span>
-                  </div>
-                </div>
-
-                {/* Latest Update */}
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <div className="text-xs text-gray-600 mb-1">Latest Update:</div>
-                  <div className="text-sm font-medium text-gray-900">
-                    {getLatestUpdate(complaint.timeline)}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {new Date(complaint.submittedAt).toLocaleDateString()}
-                  </div>
-                </div>
-
-                {/* Reference Number */}
-                {complaint.referenceNumber && (
-                  <div className="text-xs text-gray-500">
-                    Ref: {complaint.referenceNumber}
-                  </div>
-                )}
-
-                {/* Action Buttons */}
-                <div className="flex gap-2 pt-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => openTimeline(complaint)}
-                    className="flex-1"
-                  >
-                    <Eye className="mr-1 h-3 w-3" />
-                    View Timeline
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+          {filteredComplaints.map((complaint) => (
+            <ComplaintCard
+              key={complaint._id}
+              complaint={complaint}
+              onViewTimeline={() => openTimeline(complaint)}
+            />
           ))}
         </div>
       )}

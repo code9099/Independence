@@ -10,6 +10,7 @@ const threadRoutes = require('./routes/threadRoutes');
 const heatmapRoutes = require('./routes/heatmapRoutes');
 const officerRoutes = require('./routes/officerRoutes');
 const authRoutes = require('./routes/authRoutes');
+const testRoutes = require('./routes/testRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -42,6 +43,7 @@ app.use('/api/issues', issueRoutes);
 app.use('/api/threads', threadRoutes);
 app.use('/api/heatmap-data', heatmapRoutes);
 app.use('/api/officers', officerRoutes);
+app.use('/api/test', testRoutes);
 
 // Health check
 app.get('/', (req, res) => res.send('JanConnect API running!'));
@@ -64,6 +66,8 @@ app.listen(PORT, () => {
   console.log('- POST /api/auth/register');
   console.log('- POST /api/auth/login');
   console.log('- GET /api/auth/profile');
+  console.log('- GET /api/test/email-config');
+  console.log('- POST /api/test/send-test-email');
 });
 
 module.exports = app;

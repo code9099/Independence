@@ -4,6 +4,7 @@ import { Check, ArrowDown, ThumbsUp, MailCheck, MailX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 // Assume a default "always-logged-in" user
 const DEFAULT_EMAIL = "user@janconnect.com";
@@ -44,6 +45,7 @@ const ReportProblem: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
   const [dept, setDept] = useState(DEPARTMENTS[0]);
   const [anim, setAnim] = useState(false);
+  const { toast } = useToast();
 
   // For email status dialog
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -72,44 +74,82 @@ const ReportProblem: React.FC = () => {
 
     let emailInfo: EmailPopupInfo = null;
     try {
+      console.log('🚀 Submitting complaint:', complaintData);
+      
       const res = await fetch("/api/issues", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(complaintData),
       });
+
+      console.log('📡 Response status:', res.status);
+      console.log('📡 Response headers:', res.headers.get('content-type'));
+      
+      // Check if response is JSON
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server returned non-JSON response');
+      }
+
       const json = await res.json();
-      if (json.emailStatus && json.emailLog) {
+      console.log('📦 Response data:', json);
+
+      if (json.success) {
+        // Success case
         emailInfo = {
-          success: json.emailStatus.success,
-          officerName: dept.name + " Officer",
-          officerEmail: json.emailLog.to || "unknown",
-          sentAt: json.emailLog.sentAt
-            ? new Date(json.emailLog.sentAt).toLocaleString()
+          success: json.emailStatus?.success || false,
+          officerName: json.departmentMapping?.officer?.name || `${dept.name} Officer`,
+          officerEmail: json.departmentMapping?.officer?.email || "unknown",
+          sentAt: json.issue?.emailLog?.sentAt
+            ? new Date(json.issue.emailLog.sentAt).toLocaleString()
             : undefined,
-          status: json.emailLog.status,
-          error: json.emailLog.error,
+          status: json.issue?.emailLog?.status || "unknown",
+          error: json.emailStatus?.error || json.issue?.emailLog?.error,
         };
-      } else if (json.emailStatus) {
-        emailInfo = {
-          success: json.emailStatus.success,
-          officerName: dept.name + " Officer",
-          officerEmail: "unknown",
-          sentAt: undefined,
-          status: json.emailStatus.success ? "sent" : "failed",
-          error: json.emailStatus.error,
-        };
+
+        // Show success toast
+        toast({
+          title: "✅ Complaint Submitted Successfully!",
+          description: `Your ${complaintData.type} complaint has been submitted to ${dept.name}.`,
+          duration: 5000,
+        });
+
+        // Show email status toast
+        if (emailInfo.success) {
+          toast({
+            title: "📧 Email Sent",
+            description: `Officer ${emailInfo.officerName} has been notified.`,
+            duration: 5000,
+          });
+        } else {
+          toast({
+            title: "⚠️ Email Failed",
+            description: "Complaint saved but officer notification failed.",
+            variant: "destructive",
+            duration: 5000,
+          });
+        }
       } else {
-        emailInfo = {
-          success: false,
-          error: "Unknown error sending email",
-        };
+        // Server returned error in JSON
+        throw new Error(json.message || 'Complaint submission failed');
       }
     } catch (err: any) {
+      console.error('❌ Submission error:', err);
+      
       emailInfo = {
         success: false,
-        error: err?.message || "Failed to send complaint",
+        error: err?.message || "Failed to submit complaint",
       };
+
+      // Show error toast
+      toast({
+        title: "❌ Submission Failed",
+        description: err?.message || "Failed to submit complaint. Please try again.",
+        variant: "destructive",
+        duration: 5000,
+      });
     }
+
     setTimeout(() => setAnim(false), 1200);
     setTimeout(() => setSubmitted(false), 2500);
     setDesc("");
@@ -189,7 +229,7 @@ const ReportProblem: React.FC = () => {
             <DialogTitle>
               {emailPopup?.success
                 ? (<span className="flex items-center gap-2 text-green-700"><MailCheck className="w-5 h-5" /> Email Sent Successfully</span>)
-                : (<span className="flex items-center gap-2 text-red-700"><MailX className="w-5 h-5" /> Email Failed</span>)
+                : (<span className="flex items-center gap-2 text-red-700"><MailX className="w-5 h-5" /> Email Status</span>)
               }
             </DialogTitle>
             <DialogDescription>
@@ -211,10 +251,10 @@ const ReportProblem: React.FC = () => {
                       variant={"secondary"}
                       onClick={() => {
                         setDialogOpen(false);
-                        window.location.href = "/profile"; // or "/my-complaints"
+                        window.location.href = "/my-complaints";
                       }}
                     >
-                      Track Email
+                      Track Complaint
                     </Button>
                   </div>
                   <div className="text-green-700 font-semibold mt-2">
@@ -224,13 +264,16 @@ const ReportProblem: React.FC = () => {
               ) : (
                 <div>
                   <div className="text-md text-red-800 mb-2 font-semibold">
-                    Email was not sent. Please try again or contact support.
+                    Your complaint was saved, but email notification failed.
                   </div>
                   {emailPopup?.error && (
                     <div className="text-xs text-red-600 mb-2">
                       Error: {emailPopup.error}
                     </div>
                   )}
+                  <div className="text-sm text-gray-700 mt-2">
+                    Don't worry - your complaint is still recorded and will be processed.
+                  </div>
                 </div>
               )}
             </DialogDescription>

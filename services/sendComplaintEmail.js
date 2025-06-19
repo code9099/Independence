@@ -2,6 +2,11 @@
 const { createEmailTransporter, emailTemplates } = require('./emailConfig');
 
 async function sendComplaintEmail({ complaint, dept, departmentHead, imageBuffer, imageMimetype }) {
+  console.log('📧 Starting email send process...');
+  console.log('📧 Complaint:', complaint);
+  console.log('📧 Department:', dept);
+  console.log('📧 Officer:', departmentHead);
+  
   try {
     const transporter = createEmailTransporter();
     const officer = departmentHead;
@@ -29,26 +34,39 @@ async function sendComplaintEmail({ complaint, dept, departmentHead, imageBuffer
     };
 
     console.log(`📧 Sending complaint email to: ${mailOptions.to}`);
+    console.log(`📧 Email subject: ${mailOptions.subject}`);
+    
     const info = await transporter.sendMail(mailOptions);
     
     console.log('✅ Email sent successfully:', {
       messageId: info.messageId,
       to: mailOptions.to,
-      subject: mailOptions.subject
+      subject: mailOptions.subject,
+      response: info.response
     });
     
     return { 
       success: true, 
+      message: "Email sent successfully",
       response: info,
-      messageId: info.messageId
+      messageId: info.messageId,
+      to: mailOptions.to
     };
     
   } catch (err) {
-    console.error('❌ Email sending failed:', err.message);
+    console.error('❌ Email sending failed:', {
+      error: err.message,
+      code: err.code,
+      command: err.command,
+      stack: err.stack
+    });
+    
     return { 
       success: false, 
+      message: "Email sending failed",
       error: err.message, 
-      response: err 
+      response: err,
+      code: err.code
     };
   }
 }

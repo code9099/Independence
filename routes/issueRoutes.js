@@ -9,6 +9,7 @@ const { getDepartmentMapping } = require("../services/departmentMapper");
 // Create new issue WITH auto-mapping and tracking
 router.post("/", async (req, res) => {
   try {
+    console.log('📝 Received complaint submission:', req.body);
     const complaintData = req.body;
     
     // Get department mapping and officer info
@@ -16,6 +17,8 @@ router.post("/", async (req, res) => {
       complaintData.type, 
       complaintData.constituency
     );
+    
+    console.log('🏛️ Department mapping:', mapping);
     
     // Create issue with enhanced data
     const issue = new Issue({
@@ -30,7 +33,7 @@ router.post("/", async (req, res) => {
     });
 
     // Auto-submit to government portal (async, waits for reference)
-    let portalResult = null;
+    let portalResult = { success: false, error: "Portal submission not attempted" };
     try {
       portalResult = await submitToOfficialPortal(issue);
       if (portalResult?.reference) {
@@ -50,18 +53,21 @@ router.post("/", async (req, res) => {
         );
       }
     } catch (err) {
-      console.error("Portal submission failed:", err.message);
+      console.error("❌ Portal submission failed:", err.message);
       portalResult = { success: false, error: err.message };
     }
 
     // Send email to assigned officer
     let emailStatus = { success: false, error: "Email not attempted" };
     try {
+      console.log('📧 Attempting to send email to officer:', mapping.officer);
       emailStatus = await sendComplaintEmail({ 
         complaint: complaintData, 
         dept: mapping.department, 
         departmentHead: mapping.officer 
       });
+      
+      console.log('📧 Email result:', emailStatus);
       
       issue.emailSent = emailStatus.success;
       issue.emailLog = {
@@ -81,6 +87,8 @@ router.post("/", async (req, res) => {
         );
       }
     } catch (err) {
+      console.error('❌ Email sending error:', err);
+      emailStatus = { success: false, error: err.message };
       issue.emailSent = false;
       issue.emailLog = {
         sentAt: new Date(),
@@ -90,34 +98,53 @@ router.post("/", async (req, res) => {
       };
     }
 
+    // Save the issue
     await issue.save();
+    console.log('✅ Issue saved successfully:', issue._id);
 
-    res.status(201).json({
-      ...issue.toObject(),
+    // Always return proper JSON response
+    return res.status(201).json({
+      success: true,
+      message: "Complaint submitted successfully",
+      issue: issue.toObject(),
       departmentMapping: mapping,
       portalSubmission: portalResult,
       emailStatus,
     });
-  } catch (e) {
-    res.status(400).json({ error: e.message });
+    
+  } catch (error) {
+    console.error('❌ Error in complaint submission:', error);
+    
+    // Always return proper JSON error response
+    return res.status(500).json({ 
+      success: false, 
+      message: "Failed to submit complaint",
+      error: error.message 
+    });
   }
 });
 
 // Get all issues for a reporter (by email/user id, optional)
 router.get('/', async (req, res) => {
-  const filter = req.query.reporter ? { reporter: req.query.reporter } : {};
-  const issues = await Issue.find(filter).sort({ submittedAt: -1 });
-  res.json(issues);
+  try {
+    const filter = req.query.reporter ? { reporter: req.query.reporter } : {};
+    const issues = await Issue.find(filter).sort({ submittedAt: -1 });
+    res.json({ success: true, issues });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 // Get issue by ID with full timeline
 router.get('/:id', async (req, res) => {
   try {
     const issue = await Issue.findById(req.params.id);
-    if (!issue) return res.status(404).json({ error: "Not found" });
-    res.json(issue);
-  } catch {
-    res.status(404).json({ error: "Not found" });
+    if (!issue) {
+      return res.status(404).json({ success: false, error: "Issue not found" });
+    }
+    res.json({ success: true, issue });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
@@ -125,7 +152,9 @@ router.get('/:id', async (req, res) => {
 router.patch('/:id/viewed', async (req, res) => {
   try {
     const issue = await Issue.findById(req.params.id);
-    if (!issue) return res.status(404).json({ error: "Not found" });
+    if (!issue) {
+      return res.status(404).json({ success: false, error: "Issue not found" });
+    }
     
     if (!issue.officerViewed.viewed) {
       issue.officerViewed = {
@@ -145,8 +174,8 @@ router.patch('/:id/viewed', async (req, res) => {
     
     await issue.save();
     res.json({ success: true, issue });
-  } catch (e) {
-    res.status(400).json({ error: e.message });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
   }
 });
 
@@ -155,7 +184,9 @@ router.patch('/:id/status', async (req, res) => {
   try {
     const { status } = req.body;
     const issue = await Issue.findById(req.params.id);
-    if (!issue) return res.status(404).json({ error: "Not found" });
+    if (!issue) {
+      return res.status(404).json({ success: false, error: "Issue not found" });
+    }
     
     const oldStatus = issue.status;
     issue.status = status;
@@ -169,8 +200,8 @@ router.patch('/:id/status', async (req, res) => {
     
     await issue.save();
     res.json({ success: true, issue });
-  } catch (e) {
-    res.status(400).json({ error: e.message });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
   }
 });
 

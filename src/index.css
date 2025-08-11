@@ -4,11 +4,45 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+
+    --primary: 226 64% 33%; /* Navy */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 215 20% 96%;
+    --secondary-foreground: 222 47% 11%;
+
+    --accent: 220 9% 46%; /* Professional Gray */
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 215 16% 90%;
+    --muted-foreground: 215 16% 45%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 226 64% 33%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Extra tokens */
+    --success: 160 84% 39%; /* #10B981 */
+
+    --radius: 12px;
+  }
+
   html {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Public Sans', system-ui, sans-serif;
   }
   body {
-    background: linear-gradient(140deg, #e9f4fa 0%, #b3e5fc 100%);
     @apply min-h-screen bg-background text-foreground transition-colors duration-300;
+    background: none;
   }
+
+  h1, h2 { font-family: 'Merriweather', serif; }
 }
+

@@ -1,5 +1,5 @@
 
-import { Home, Users, MessageCircle } from "lucide-react";
+import { Home, Users, MessageCircle, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import ProfileMenu from "@/components/ProfileMenu";
@@ -18,14 +18,17 @@ type Props = {
 
 export default function AppNavbar({ fixed = true, transparent = false }: Props) {
   return (
-    <header className={`w-full flex items-center justify-between py-3 px-5 md:px-10 ${fixed ? "fixed z-20 top-0 left-0 h-20" : ""} ${transparent ? "bg-white/60 backdrop-blur-lg" : "bg-white"} border-b border-blue-200/40 shadow-xl animate-fade-in rounded-b-2xl`}>
+    <header className={`w-full flex items-center justify-between py-3 px-5 md:px-10 ${fixed ? "fixed z-20 top-0 left-0 h-20" : ""} ${transparent ? "bg-background/80 backdrop-blur" : "bg-background/80 backdrop-blur"} border-b border-border shadow-sm`}>
       {/* Left: Logo & Brand */}
       <div className="flex items-center gap-3">
-        <span className="inline-block bg-gradient-to-r from-blue-600 to-pink-400 text-white px-4 py-2 rounded-2xl shadow-md text-2xl font-extrabold tracking-tight drop-shadow-lg hover:scale-105 transition-transform hover:bg-pink-400/80">
-          <span className="drop-shadow-xl">JanConnect</span>
+        <span className="inline-flex items-center gap-2 px-0 py-0">
+          <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary shadow-sm">
+            <ShieldCheck size={22} />
+          </span>
+          <span className="text-2xl font-bold text-foreground tracking-tight">JanConnect</span>
         </span>
-        <span className="hidden md:inline ml-2 text-lg font-semibold bg-gradient-to-r from-blue-500 via-fuchsia-500 to-pink-500 bg-clip-text text-transparent animate-pulse">
-          Delhi’s GenZ Civic Pulse
+        <span className="hidden md:inline ml-3 text-sm font-medium text-muted-foreground">
+          Professional Civic Solutions
         </span>
       </div>
       {/* Center: Navigation */}
@@ -35,19 +38,19 @@ export default function AppNavbar({ fixed = true, transparent = false }: Props) 
             <Link
               to={nav.url}
               key={nav.label}
-              className="group flex flex-col items-center px-3 py-1 transition-all duration-200 rounded-xl hover:bg-blue-100/70 hover:scale-110 active:bg-blue-200 border border-transparent hover:border-blue-400"
+              className="group flex flex-col items-center px-3 py-1 rounded-xl hover:bg-muted transition-colors"
             >
-              <nav.icon size={26} className="mb-1 text-blue-700 group-hover:text-pink-500 transition-all" />
-              <span className="text-xs font-medium text-blue-900 group-hover:text-pink-500 transition">{nav.label}</span>
+              <nav.icon size={26} className="mb-1 text-muted-foreground group-hover:text-primary transition-colors" />
+              <span className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">{nav.label}</span>
             </Link>
           ) : (
             <a
               href={nav.url}
               key={nav.label}
-              className="group flex flex-col items-center px-3 py-1 transition-all duration-200 rounded-xl hover:bg-blue-100/70 hover:scale-110 active:bg-blue-200 border border-transparent hover:border-blue-400"
+              className="group flex flex-col items-center px-3 py-1 rounded-xl hover:bg-muted transition-colors"
             >
-              <nav.icon size={26} className="mb-1 text-blue-700 group-hover:text-pink-500 transition-all" />
-              <span className="text-xs font-medium text-blue-900 group-hover:text-pink-500 transition">{nav.label}</span>
+              <nav.icon size={26} className="mb-1 text-muted-foreground group-hover:text-primary transition-colors" />
+              <span className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">{nav.label}</span>
             </a>
           )
         )}

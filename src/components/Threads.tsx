@@ -164,14 +164,14 @@ const Threads = () => {
             onClick={() => setTab(s.key)}
             className={cn(
               "text-lg font-semibold pb-1 border-b-2 transition-all",
-              tab === s.key ? "border-blue-700 text-blue-900" : "border-transparent text-gray-500 hover:text-blue-600"
+              tab === s.key ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-primary"
             )}
             type="button"
           >
             {s.label}
           </button>
         ))}
-        <span className="ml-auto text-sm text-gray-400">Community Threads</span>
+        <span className="ml-auto text-sm text-muted-foreground">Community Threads</span>
       </div>
       <AddThreadDialog onAddThread={handleAddThread} />
       <ThreadList threads={threads} />

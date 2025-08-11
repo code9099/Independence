@@ -1,14 +1,21 @@
+import { useEffect } from 'react';
 import Threads from "@/components/Threads";
-import ReturnHomeButton from "@/components/ReturnHomeButton";
+import PageHeader from "@/components/PageHeader";
 
 const ThreadsPage = () => {
+  useEffect(() => {
+    document.title = "Threads - JanConnect Professional Civic Solutions";
+  }, []);
+
   return (
-    <div className="min-h-screen flex flex-col items-center pt-28 px-6 md:px-12 xl:px-32 bg-background relative animate-fade-in spin-in crazy-bounce">
-      <ReturnHomeButton />
-      <div className="w-full max-w-3xl animate-stagger flair-wave">
-        <Threads />
+    <main className="min-h-screen pt-24">
+      <div className="max-w-6xl mx-auto px-6 space-y-6 animate-fade-in">
+        <PageHeader title="Community Threads" subtitle="Discuss civic issues and solutions in your area" />
+        <div className="w-full">
+          <Threads />
+        </div>
       </div>
-    </div>
+    </main>
   );
 };
 

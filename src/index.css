@@ -32,6 +32,17 @@
     /* Extra tokens */
     --success: 160 84% 39%; /* #10B981 */
 
+    /* Brand gradient (Instagram-inspired) */
+    --brand-start: 264 88% 60%;
+    --brand-middle: 316 73% 52%;
+    --brand-end: 33 100% 50%;
+    --gradient-brand: linear-gradient(90deg, hsl(var(--brand-start)), hsl(var(--brand-middle)), hsl(var(--brand-end)));
+    --gradient-surface: radial-gradient(1200px 600px at 50% -10%, hsl(var(--primary) / 0.12), transparent);
+
+    /* Elevation + motion */
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.25), 0 2px 8px -2px hsl(var(--foreground) / 0.08);
+    --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
     --radius: 12px;
   }
 
@@ -40,9 +51,27 @@
   }
   body {
     @apply min-h-screen bg-background text-foreground transition-colors duration-300;
-    background: none;
+    background: var(--gradient-surface), hsl(var(--background));
   }
 
   h1, h2 { font-family: 'Merriweather', serif; }
 }
 
+@layer components {
+  .text-gradient {
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .card-premium {
+    @apply bg-card border border-border rounded-xl shadow-sm;
+    box-shadow: var(--shadow-elegant);
+  }
+
+  .btn-gradient {
+    background: var(--gradient-brand);
+    color: hsl(var(--primary-foreground));
+  }
+}

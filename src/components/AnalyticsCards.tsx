@@ -17,7 +17,7 @@ export default function AnalyticsCards() {
       {stats.map(({ label, value, sub, Icon }) => (
         <article
           key={label}
-          className="bg-card border border-border rounded-xl p-4 flex items-start gap-3 shadow-sm"
+          className="card-premium p-4 flex items-start gap-3"
         >
           <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
             <Icon size={20} />

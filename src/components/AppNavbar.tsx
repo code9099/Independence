@@ -1,6 +1,6 @@
 
 import { Home, Users, MessageCircle, ShieldCheck } from "lucide-react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import ProfileMenu from "@/components/ProfileMenu";
 
@@ -18,7 +18,7 @@ type Props = {
 
 export default function AppNavbar({ fixed = true, transparent = false }: Props) {
   return (
-    <header className={`w-full flex items-center justify-between py-3 px-5 md:px-10 ${fixed ? "fixed z-20 top-0 left-0 h-20" : ""} ${transparent ? "bg-background/80 backdrop-blur" : "bg-background/80 backdrop-blur"} border-b border-border shadow-sm`}>
+    <header className={`w-full flex items-center justify-between py-3 px-5 md:px-10 ${fixed ? "fixed z-30 top-0 left-0 h-20" : ""} ${transparent ? "bg-background/60" : "bg-background/60"} backdrop-blur border-b border-border shadow-sm`}>
       {/* Left: Logo & Brand */}
       <div className="flex items-center gap-3">
         <span className="inline-flex items-center gap-2 px-0 py-0">
@@ -32,28 +32,22 @@ export default function AppNavbar({ fixed = true, transparent = false }: Props) 
         </span>
       </div>
       {/* Center: Navigation */}
-      <nav className="hidden md:flex gap-2 md:gap-4 items-center">
-        {navLinks.map((nav) =>
-          nav.url.startsWith("/") ? (
-            <Link
-              to={nav.url}
-              key={nav.label}
-              className="group flex flex-col items-center px-3 py-1 rounded-xl hover:bg-muted transition-colors"
-            >
-              <nav.icon size={26} className="mb-1 text-muted-foreground group-hover:text-primary transition-colors" />
-              <span className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">{nav.label}</span>
-            </Link>
-          ) : (
-            <a
-              href={nav.url}
-              key={nav.label}
-              className="group flex flex-col items-center px-3 py-1 rounded-xl hover:bg-muted transition-colors"
-            >
-              <nav.icon size={26} className="mb-1 text-muted-foreground group-hover:text-primary transition-colors" />
-              <span className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">{nav.label}</span>
-            </a>
-          )
-        )}
+      <nav className="hidden md:flex gap-2 md:gap-4 items-center relative">
+        {navLinks.map((nav) => (
+          <NavLink
+            to={nav.url}
+            key={nav.label}
+            className={({ isActive }) =>
+              `group flex flex-col items-center px-3 py-1 rounded-xl transition-colors relative ${
+                isActive ? "text-primary" : "text-foreground"
+              }`
+            }
+          >
+            <nav.icon size={26} className="mb-1 text-muted-foreground group-hover:text-primary transition-colors" />
+            <span className="text-xs font-medium group-hover:text-primary transition-colors">{nav.label}</span>
+            <span className="absolute -bottom-1 left-1/2 h-0.5 w-0 bg-primary transition-all duration-300 group-[.active]:w-8 group-[.active]:left-1/2 group-hover:w-8" />
+          </NavLink>
+        ))}
       </nav>
       {/* Right: Actions (Dark Mode + ProfileMenu only) */}
       <div className="flex items-center gap-2 md:gap-4">

@@ -46,6 +46,39 @@
     --radius: 12px;
   }
 
+  /* Dark theme tokens */
+  .dark {
+    --background: 222 47% 6%; /* Deep navy/charcoal */
+    --foreground: 210 40% 98%;
+
+    --primary: 316 73% 52%; /* Magenta */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 223 10% 12%;
+    --secondary-foreground: 210 40% 98%;
+
+    --accent: 33 100% 62%; /* Coral/Rose-gold */
+    --accent-foreground: 222 47% 11%;
+
+    --muted: 219 14% 18%;
+    --muted-foreground: 215 20% 65%;
+
+    --border: 220 14% 20%;
+    --input: 220 14% 20%;
+    --ring: 316 73% 52%;
+
+    --card: 222 47% 8%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 40% 98%;
+
+    --brand-start: 264 88% 60%;
+    --brand-middle: 316 73% 52%;
+    --brand-end: 33 100% 50%;
+    --gradient-brand: linear-gradient(90deg, hsl(var(--brand-start)), hsl(var(--brand-middle)), hsl(var(--brand-end)));
+    --gradient-surface: radial-gradient(1200px 600px at 50% -10%, hsl(var(--primary) / 0.18), transparent);
+  }
+
   html {
     font-family: 'Public Sans', system-ui, sans-serif;
   }
@@ -119,4 +152,9 @@
     top: 100%;
     opacity: 1;
   }
-}
+
+  /* Subtle particle float animation */
+  @keyframes float {
+    from { transform: translateY(0) translateX(0); }
+    to { transform: translateY(-20px) translateX(10px); }
+  }

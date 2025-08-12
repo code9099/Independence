@@ -15,7 +15,7 @@ type IssuesCarouselRowProps = {
 export default function IssuesCarouselRow({ title, items }: IssuesCarouselRowProps) {
   return (
     <section aria-label={title} className="space-y-3">
-      <h2 className="font-semibold text-2xl text-gradient">{title}</h2>
+      <h2 className="font-semibold text-2xl md:text-3xl text-gradient">{title}</h2>
       <div className="relative">
         <Carousel opts={{ align: "start" }} className="relative">
           <CarouselContent className="row-mask">
@@ -28,7 +28,10 @@ export default function IssuesCarouselRow({ title, items }: IssuesCarouselRowPro
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>{it.submitted}</span>
                   </div>
-                  <div className="mt-1 text-lg font-semibold">{it.type}</div>
+                  <div className="mt-1 text-lg font-semibold flex items-center gap-2">
+                    <span>{pickIcon(it.type)}</span>
+                    <span>{it.type}</span>
+                  </div>
                   <p className="mt-1 text-sm text-muted-foreground overflow-hidden text-ellipsis">
                     {it.desc}
                   </p>
@@ -50,4 +53,12 @@ export default function IssuesCarouselRow({ title, items }: IssuesCarouselRowPro
       </div>
     </section>
   );
+}
+
+function pickIcon(type: string) {
+  const key = type.toLowerCase();
+  if (key.includes("garbage")) return <Trash2 className="w-5 h-5 text-accent" />;
+  if (key.includes("water")) return <Droplets className="w-5 h-5 text-accent" />;
+  if (key.includes("light")) return <Lightbulb className="w-5 h-5 text-accent" />;
+  return <AlertTriangle className="w-5 h-5 text-accent" />;
 }

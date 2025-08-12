@@ -25,7 +25,7 @@ export default function AppNavbar({ fixed = true, transparent = false }: Props) 
           <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary shadow-sm">
             <ShieldCheck size={22} />
           </span>
-          <span className="text-2xl font-bold text-foreground tracking-tight">JanConnect</span>
+          <span className="text-2xl font-bold text-gradient tracking-tight">JanConnect</span>
         </span>
         <span className="hidden md:inline ml-3 text-sm font-medium text-muted-foreground">
           Professional Civic Solutions

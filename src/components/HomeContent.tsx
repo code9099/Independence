@@ -38,10 +38,10 @@ export default function HomeContent() {
 
   return (
     <main className="flex flex-1 pt-28 px-6 md:px-12 xl:px-32 gap-8 w-full transition-all duration-300 flex-col">
-      <div className="text-center bg-card border border-border text-foreground p-6 rounded-lg shadow-sm">
-        <h1 className="text-3xl font-bold mb-2">JanConnect – Professional Civic Solutions</h1>
-        <p className="text-base text-muted-foreground mb-4">A reliable platform to report, track, and resolve civic issues.</p>
-        <Button onClick={() => navigate("/report")} size="lg">
+      <div className="text-center card-premium p-8">
+        <h1 className="text-4xl md:text-5xl font-bold mb-2 text-gradient">JanConnect – Professional Civic Solutions</h1>
+        <p className="text-base text-muted-foreground mb-5">A reliable platform to report, track, and resolve civic issues.</p>
+        <Button onClick={() => navigate("/report")} size="lg" className="btn-gradient hover:opacity-90 transition-opacity">
           <AlertTriangle className="w-5 h-5 mr-2" />
           Report an Issue
         </Button>
@@ -51,7 +51,7 @@ export default function HomeContent() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div 
           onClick={() => navigate("/report")}
-          className="bg-card border border-border rounded-xl p-4 cursor-pointer hover:bg-muted transition-colors group"
+          className="card-premium p-4 cursor-pointer hover-scale group"
         >
           <div className="flex items-center gap-3 mb-2">
             <div className="w-12 h-12 rounded-full flex items-center justify-center bg-primary/10 text-primary group-hover:scale-105 transition-transform">
@@ -66,7 +66,7 @@ export default function HomeContent() {
         
         <div 
           onClick={() => navigate("/my-complaints")}
-          className="bg-card border border-border rounded-xl p-4 cursor-pointer hover:bg-muted transition-colors group"
+          className="card-premium p-4 cursor-pointer hover-scale group"
         >
           <div className="flex items-center gap-3 mb-2">
             <div className="w-12 h-12 rounded-full flex items-center justify-center bg-primary/10 text-primary group-hover:scale-105 transition-transform">
@@ -81,7 +81,7 @@ export default function HomeContent() {
         
         <div 
           onClick={() => navigate("/heatmap")}
-          className="bg-card border border-border rounded-xl p-4 cursor-pointer hover:bg-muted transition-colors group"
+          className="card-premium p-4 cursor-pointer hover-scale group"
         >
           <div className="flex items-center gap-3 mb-2">
             <div className="w-12 h-12 rounded-full flex items-center justify-center bg-primary/10 text-primary group-hover:scale-105 transition-transform">
@@ -104,7 +104,7 @@ export default function HomeContent() {
         <section className="flex-1 max-w-3xl mx-auto flex flex-col gap-8">
           {/* Issues Activity Board */}
           <div>
-            <h2 className="font-semibold text-2xl text-foreground mb-2 flex items-center gap-2">
+            <h2 className="font-semibold text-2xl text-gradient mb-2 flex items-center gap-2">
               Live Civic Issues
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

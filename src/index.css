@@ -74,4 +74,8 @@
     background: var(--gradient-brand);
     color: hsl(var(--primary-foreground));
   }
+
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
 }

@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AnalyticsCards from "@/components/AnalyticsCards";
+import HeroBanner from "@/components/HeroBanner";
+import IssuesCarouselRow from "@/components/IssuesCarouselRow";
 
-// Mock issues (as before)
 const mockIssues: IssueCardProps[] = [
   {
     type: "Garbage Overflow",
@@ -38,14 +39,7 @@ export default function HomeContent() {
 
   return (
     <main className="flex flex-1 pt-28 px-6 md:px-12 xl:px-32 gap-8 w-full transition-all duration-300 flex-col">
-      <div className="text-center card-premium p-8">
-        <h1 className="text-4xl md:text-5xl font-bold mb-2 text-gradient">JanConnect – Professional Civic Solutions</h1>
-        <p className="text-base text-muted-foreground mb-5">A reliable platform to report, track, and resolve civic issues.</p>
-        <Button onClick={() => navigate("/report")} size="lg" className="btn-gradient hover:opacity-90 transition-opacity">
-          <AlertTriangle className="w-5 h-5 mr-2" />
-          Report an Issue
-        </Button>
-      </div>
+      <HeroBanner />
       <AnalyticsCards />
       {/* Quick Action Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -103,16 +97,7 @@ export default function HomeContent() {
         {/* Center: Civic Issue Activity & Threads */}
         <section className="flex-1 max-w-3xl mx-auto flex flex-col gap-8">
           {/* Issues Activity Board */}
-          <div>
-            <h2 className="font-semibold text-2xl text-gradient mb-2 flex items-center gap-2">
-              Live Civic Issues
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {mockIssues.map((issue, idx) =>
-                <IssueCard key={idx} {...issue} />
-              )}
-            </div>
-          </div>
+          <IssuesCarouselRow title="Trending near you" items={[...mockIssues, ...mockIssues, ...mockIssues]} />
       <div className="pt-4">
         <Threads />
       </div>

@@ -158,3 +158,4 @@
     from { transform: translateY(0) translateX(0); }
     to { transform: translateY(-20px) translateX(10px); }
   }
+}

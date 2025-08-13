@@ -1,4 +1,5 @@
 import { IssueCardProps } from "@/components/IssueCard";
+import { AlertTriangle, Droplets, Lightbulb, Trash2 } from "lucide-react";
 import {
   Carousel,
   CarouselContent,

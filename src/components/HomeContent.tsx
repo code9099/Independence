@@ -40,9 +40,9 @@ export default function HomeContent() {
 
   const resolvedStories: IssueCardProps[] = mockIssues.map((i) => ({ ...i, status: "Resolved", submitted: "Recently" }));
   const topDepts: IssueCardProps[] = [
-    { type: "PWD", desc: "Roads, lighting, water works", department: "PWD", status: "Top Performer", submitted: "This week" },
-    { type: "MCD", desc: "Sanitation & waste services", department: "MCD", status: "Rising", submitted: "This week" },
-    { type: "DJB", desc: "Water supply & quality", department: "DJB", status: "Consistent", submitted: "This week" },
+    { type: "PWD", desc: "Roads, lighting, water works", department: "PWD", status: "Resolved", submitted: "This week" },
+    { type: "MCD", desc: "Sanitation & waste services", department: "MCD", status: "In Progress", submitted: "This week" },
+    { type: "DJB", desc: "Water supply & quality", department: "DJB", status: "Resolved", submitted: "This week" },
   ];
 
   return (

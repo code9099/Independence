@@ -97,6 +97,36 @@ router.post("/", async (req, res) => {
       };
     }
 
+    // Optional: send acknowledgement to reporter (non-blocking for flow)
+    try {
+      const reporterEmail = complaintData?.reporter;
+      if (reporterEmail && typeof reporterEmail === 'string' && reporterEmail.includes('@')) {
+        const { sendEmail } = require('../services/smtpEmail');
+        const subject = `JanConnect: Complaint Received - ${complaintData.type}`;
+        const html = `
+          <div style="font-family: Arial, sans-serif; line-height:1.6;">
+            <h2>Thank you for reporting your concern</h2>
+            <p>We have received your complaint and assigned it to <strong>${mapping.officer?.name || 'the concerned officer'}</strong> (${mapping.department}).</p>
+            <p><strong>Complaint Type:</strong> ${complaintData.type}<br/>
+               <strong>Description:</strong> ${complaintData.description || ''}</p>
+            ${issue.referenceNumber ? `<p><strong>Portal Reference:</strong> ${issue.referenceNumber}</p>` : ''}
+            <p>We will keep you updated on the progress.</p>
+            <p>— JanConnect Civic Platform</p>
+          </div>
+        `;
+        const ackRes = await sendEmail(reporterEmail, subject, html);
+        if (ackRes.success) {
+          await issue.addTimelineEvent(
+            "Acknowledgement Sent",
+            "Confirmation email sent to reporter",
+            { reporter: reporterEmail }
+          );
+        }
+      }
+    } catch (ackErr) {
+      console.error('❌ Reporter acknowledgement email failed:', ackErr.message);
+    }
+
     // Save the issue
     await issue.save();
     console.log('✅ Issue saved successfully:', issue._id);

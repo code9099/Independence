@@ -4,25 +4,31 @@ const nodemailer = require('nodemailer');
 // Create email transporter with better error handling
 function createEmailTransporter() {
   console.log('📧 Creating email transporter...');
-  
-  const config = {
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USERNAME,
-      pass: process.env.EMAIL_PASSWORD
-    },
-    secure: true,
-    port: 465,
-    debug: true
+
+  const auth = {
+    user: process.env.EMAIL_USERNAME,
+    pass: process.env.EMAIL_PASSWORD,
   };
 
+  const service = process.env.SMTP_SERVICE || 'gmail';
+  const host = process.env.SMTP_HOST || (service === 'gmail' ? 'smtp.gmail.com' : undefined);
+  const port = Number(process.env.SMTP_PORT) || 465;
+  const secure = process.env.SMTP_SECURE ? process.env.SMTP_SECURE === 'true' : port === 465;
+
+  const baseConfig = host
+    ? { host, port, secure, auth, debug: true }
+    : { service, port, secure, auth, debug: true };
+
   console.log('📧 Email config:', {
-    service: config.service,
-    user: config.auth.user ? '✓ Set' : '✗ Missing',
-    pass: config.auth.pass ? '✓ Set' : '✗ Missing'
+    service: baseConfig.service || 'custom-host',
+    host: baseConfig.host || 'via-service',
+    port: baseConfig.port,
+    secure: baseConfig.secure,
+    user: auth.user ? '✓ Set' : '✗ Missing',
+    pass: auth.pass ? '✓ Set' : '✗ Missing',
   });
 
-  return nodemailer.createTransporter(config);
+  return nodemailer.createTransport(baseConfig);
 }
 
 // Enhanced email templates

@@ -1,7 +1,7 @@
 
 const { createEmailTransporter, emailTemplates } = require('./emailConfig');
 
-async function sendComplaintEmail({ complaint, dept, departmentHead, imageBuffer, imageMimetype }) {
+async function sendComplaintEmail({ complaint, dept, departmentHead, directoryEmails, imageBuffer, imageMimetype }) {
   console.log('📧 Starting email send process...');
   console.log('📧 Complaint:', complaint);
   console.log('📧 Department:', dept);
@@ -9,18 +9,30 @@ async function sendComplaintEmail({ complaint, dept, departmentHead, imageBuffer
   
   try {
     const transporter = createEmailTransporter();
+    try { await transporter.verify(); } catch (_) { /* ignore verify errors */ }
     const officer = departmentHead;
     
     // Use the enhanced email template
     const template = emailTemplates.complaintNotification;
     
+    const officerEmail = officer?.email && /@/.test(officer?.email) ? officer.email : '';
+    const dir = directoryEmails || { to: undefined, cc: [], all: [] };
+    const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USERNAME || 'lamineyamalpaglu@gmail.com';
+    // In non‑production, route to admin to guarantee delivery while testing
+    const isProd = process.env.NODE_ENV === 'production';
+    const primaryTo = isProd ? (officerEmail || dir.to || adminEmail) : adminEmail;
+    const ccList = [...(dir.cc || [])];
+    if (isProd && adminEmail) ccList.push(adminEmail);
+    if (isProd && officerEmail && officerEmail !== primaryTo) ccList.push(officerEmail);
+
     const mailOptions = {
       from: {
-        name: 'JanConnect Civic Platform',
-        address: process.env.EMAIL_USERNAME || 'no-reply@janconnect.org'
+        name: 'JanConnect',
+        address: process.env.EMAIL_FROM_ADDRESS || process.env.EMAIL_USERNAME || 'lamineyamalpaglu@gmail.com'
       },
-      to: officer?.email || `${dept.toLowerCase()}.officer@delhi.gov.in`,
-      cc: process.env.ADMIN_EMAIL || 'support@janconnect.in',
+      to: primaryTo,
+      cc: ccList.length ? ccList.join(',') : undefined,
+      replyTo: process.env.EMAIL_REPLY_TO || process.env.EMAIL_FROM_ADDRESS || process.env.EMAIL_USERNAME,
       subject: template.subject(complaint),
       html: template.html(complaint, officer, dept),
       attachments: imageBuffer ? [

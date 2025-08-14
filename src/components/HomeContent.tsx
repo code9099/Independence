@@ -1,6 +1,4 @@
 import OfficerDetailsCard from "@/components/OfficerDetailsCard";
-import Leaderboard from "@/components/Leaderboard";
-import MyComplaints from "@/components/MyComplaints";
 import Threads from "@/components/Threads";
 import { IssueCard, IssueCardProps } from "@/components/IssueCard";
 import { Button } from "@/components/ui/button";
@@ -46,82 +44,87 @@ export default function HomeContent() {
   ];
 
   return (
-    <main className="flex flex-1 pt-28 px-6 md:px-12 xl:px-32 gap-8 w-full transition-all duration-300 flex-col">
-      <HeroBanner />
-      <AnalyticsCards />
-      {/* Quick Action Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div 
-          onClick={() => navigate("/report")}
-          className="card-premium p-4 cursor-pointer hover-scale group"
-        >
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center bg-primary/10 text-primary group-hover:scale-105 transition-transform">
-              <Plus className="w-6 h-6" />
+    <main className="flex flex-1 w-full transition-all duration-300 flex-col">
+      <div className="app-container pt-24 page-stack">
+        <HeroBanner />
+        <AnalyticsCards />
+        {/* Quick Action Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+          <div 
+            onClick={() => navigate("/report")}
+            className="card-premium p-4 cursor-pointer hover-scale group"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-12 h-12 rounded-full flex items-center justify-center bg-primary/10 text-primary group-hover:scale-105 transition-transform">
+                <Plus className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-bold">Report Issue</h3>
+                <p className="text-sm text-muted-foreground">Submit new complaint</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-bold">Report Issue</h3>
-              <p className="text-sm text-muted-foreground">Submit new complaint</p>
+          </div>
+          
+          <div 
+            onClick={() => navigate("/my-complaints")}
+            className="card-premium p-4 cursor-pointer hover-scale group"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-12 h-12 rounded-full flex items-center justify-center bg-primary/10 text-primary group-hover:scale-105 transition-transform">
+                <AlertTriangle className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-bold">Track Complaints</h3>
+                <p className="text-sm text-muted-foreground">View your submissions</p>
+              </div>
+            </div>
+          </div>
+          
+          <div 
+            onClick={() => navigate("/heatmap")}
+            className="card-premium p-4 cursor-pointer hover-scale group"
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-12 h-12 rounded-full flex items-center justify-center bg-primary/10 text-primary group-hover:scale-105 transition-transform">
+                <AlertTriangle className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-bold">View Heatmap</h3>
+                <p className="text-sm text-muted-foreground">See area problems</p>
+              </div>
             </div>
           </div>
         </div>
         
-        <div 
-          onClick={() => navigate("/my-complaints")}
-          className="card-premium p-4 cursor-pointer hover-scale group"
-        >
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center bg-primary/10 text-primary group-hover:scale-105 transition-transform">
-              <AlertTriangle className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="font-bold">Track Complaints</h3>
-              <p className="text-sm text-muted-foreground">View your submissions</p>
-            </div>
-          </div>
+        <div className="glass-panel p-4">
+          <OfficerDetailsCard constituency="New Delhi" />
         </div>
         
-        <div 
-          onClick={() => navigate("/heatmap")}
-          className="card-premium p-4 cursor-pointer hover-scale group"
+        {/* Full-width content blocks */}
+        <IssuesCarouselRow title="Trending near you" items={[...mockIssues, ...mockIssues, ...mockIssues]} fullBleed />
+        <IssuesCarouselRow title="Resolved Success Stories" items={[...resolvedStories, ...resolvedStories]} fullBleed />
+
+        {/* Global FAB for quick reporting */}
+        <button
+          onClick={() => navigate('/report')}
+          className="fixed bottom-6 right-6 z-40 rounded-full px-5 py-3 btn-gradient shadow-lg hover:shadow-xl hover:scale-105 transition focus-ring"
+          aria-label="Report an issue"
         >
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center bg-primary/10 text-primary group-hover:scale-105 transition-transform">
-              <AlertTriangle className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="font-bold">View Heatmap</h3>
-              <p className="text-sm text-muted-foreground">See area problems</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div className="glass-panel p-4">
-        <OfficerDetailsCard constituency="New Delhi" />
-      </div>
-      
-      <div className="flex gap-8 w-full">
-        {/* Center: Civic Issue Activity & Threads */}
-        <section className="flex-1 max-w-3xl mx-auto flex flex-col gap-8">
-          {/* Issues Activity Board */}
-          <IssuesCarouselRow title="Trending near you" items={[...mockIssues, ...mockIssues, ...mockIssues]} />
-          <IssuesCarouselRow title="Resolved Success Stories" items={[...resolvedStories, ...resolvedStories]} />
-          <IssuesCarouselRow title="Top Departments" items={[...topDepts, ...topDepts, ...topDepts]} />
+          Report an Issue
+        </button>
+        
+        {/* Threads and Heatmap within container */}
+        <section className="flex-1 mx-auto flex flex-col gap-8 min-w-0">
           <div className="pt-4">
             <Threads />
           </div>
-        </section>
-        {/* Right: Leaderboard */}
-        <aside className="hidden xl:flex flex-col w-[300px] shrink-0 pt-0 sticky top-28 self-start">
-          <Leaderboard />
-          <div className="mt-6 card-premium p-3">
+          <div className="mt-6 card-premium p-4">
             <h3 className="font-semibold mb-2">Live Issue Heatmap</h3>
             <div className="rounded-xl overflow-hidden">
               <CivicHeatmap />
             </div>
           </div>
-        </aside>
+        </section>
       </div>
     </main>
   );

@@ -8,7 +8,7 @@ const ThreadsPage = () => {
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 md:px-6 py-6 space-y-6 animate-fade-in">
+    <div className="app-container py-6 page-stack animate-fade-in">
       <PageHeader title="Community Threads" subtitle="Discuss civic issues and solutions in your area" />
       <div className="w-full">
         <Threads />

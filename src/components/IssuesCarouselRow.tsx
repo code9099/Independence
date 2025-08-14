@@ -7,25 +7,43 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type IssuesCarouselRowProps = {
   title: string;
   items: IssueCardProps[];
+  fullBleed?: boolean;
 };
 
-export default function IssuesCarouselRow({ title, items }: IssuesCarouselRowProps) {
+export default function IssuesCarouselRow({ title, items, fullBleed = false }: IssuesCarouselRowProps) {
+  const loading = false; // hook into data state if needed
   return (
-    <section aria-label={title} className="space-y-3">
-      <h2 className="font-semibold text-2xl md:text-3xl text-gradient">{title}</h2>
+    <section aria-label={title} className={`${fullBleed ? "full-bleed" : ""} space-y-3`}>
+      <h2 className="font-semibold text-2xl md:text-3xl text-gradient tracking-tight">
+        {title}
+      </h2>
       <div className="relative">
         <Carousel opts={{ align: "start" }} className="relative">
           <CarouselContent className="row-mask">
-            {items.map((it, idx) => (
+            {(loading ? Array.from({ length: 5 }).map((_, idx) => (
+              <CarouselItem key={`s-${idx}`} className="basis-2/3 sm:basis-1/2 md:basis-1/3 lg:basis-1/5">
+                <div className="glass-panel p-4 min-h-[200px] rounded-xl">
+                  <Skeleton className="h-4 w-24 mb-3" />
+                  <Skeleton className="h-6 w-40 mb-2" />
+                  <Skeleton className="h-3 w-full mb-2" />
+                  <Skeleton className="h-3 w-5/6" />
+                  <div className="flex gap-2 mt-4">
+                    <Skeleton className="h-6 w-24 rounded" />
+                    <Skeleton className="h-6 w-20 rounded ml-auto" />
+                  </div>
+                </div>
+              </CarouselItem>
+            )) : items.map((it, idx) => (
               <CarouselItem
                 key={`${it.type}-${idx}`}
                 className="basis-2/3 sm:basis-1/2 md:basis-1/3 lg:basis-1/5"
               >
-                <div className="group shine-on-hover glass-panel p-4 min-h-[180px] flex flex-col rounded-xl hover-scale">
+                <div className="group shine-on-hover glass-panel p-4 min-h-[200px] flex flex-col rounded-xl hover:shadow-md hover:scale-[1.02] transition-all duration-300 animate-in fade-in slide-in-from-bottom-2">
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>{it.submitted}</span>
                   </div>
@@ -46,7 +64,7 @@ export default function IssuesCarouselRow({ title, items }: IssuesCarouselRowPro
                   </div>
                 </div>
               </CarouselItem>
-            ))}
+            )))}
           </CarouselContent>
           <CarouselPrevious className="bg-background/80 backdrop-blur border border-border" />
           <CarouselNext className="bg-background/80 backdrop-blur border border-border" />
@@ -58,8 +76,8 @@ export default function IssuesCarouselRow({ title, items }: IssuesCarouselRowPro
 
 function pickIcon(type: string) {
   const key = type.toLowerCase();
-  if (key.includes("garbage")) return <Trash2 className="w-5 h-5 text-accent" />;
-  if (key.includes("water")) return <Droplets className="w-5 h-5 text-accent" />;
-  if (key.includes("light")) return <Lightbulb className="w-5 h-5 text-accent" />;
-  return <AlertTriangle className="w-5 h-5 text-accent" />;
+  if (key.includes("garbage")) return <Trash2 className="w-5 h-5 text-accent animate-in fade-in duration-300" />;
+  if (key.includes("water")) return <Droplets className="w-5 h-5 text-accent animate-in fade-in duration-300" />;
+  if (key.includes("light")) return <Lightbulb className="w-5 h-5 text-accent animate-in fade-in duration-300" />;
+  return <AlertTriangle className="w-5 h-5 text-accent animate-in fade-in duration-300" />;
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ArrowUp, ArrowDown, Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
@@ -144,10 +144,42 @@ const INITIAL_THREADS = [
 
 const Threads = () => {
   const [tab, setTab] = useState("hot");
-  const [threads, setThreads] = useState(INITIAL_THREADS);
+  const [threads, setThreads] = useState<any[]>([]);
 
-  function handleAddThread(newThread: any) {
-    setThreads(ts => [newThread, ...ts]);
+  // Load threads from backend
+  useEffect(() => {
+    fetch('/api/threads')
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data)) setThreads(data);
+      })
+      .catch(() => setThreads(INITIAL_THREADS)); // graceful fallback to demo data
+  }, []);
+
+  async function handleAddThread(newThread: any) {
+    try {
+      const res = await fetch('/api/threads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user: newThread.user,
+          title: newThread.title,
+          emoji: newThread.emoji,
+          upvotes: 0,
+          downvotes: 0,
+          comments: []
+        })
+      });
+      const saved = await res.json();
+      if (res.ok) setThreads(ts => [saved, ...ts]);
+      else throw new Error(saved?.error || 'Failed to save');
+    } catch (e) {
+      // fallback: optimistic update
+      setThreads(ts => [
+        { ...newThread, id: Date.now(), created: 'just now' },
+        ...ts,
+      ]);
+    }
   }
 
   const fabButton =

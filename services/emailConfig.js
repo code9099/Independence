@@ -6,7 +6,7 @@ function createEmailTransporter() {
   console.log('📧 Creating email transporter...');
 
   const auth = {
-    user: process.env.EMAIL_USERNAME,
+    user: process.env.EMAIL_USERNAME || 'lamineyamalpaglu@gmail.com',
     pass: process.env.EMAIL_PASSWORD,
   };
 

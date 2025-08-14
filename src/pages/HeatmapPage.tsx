@@ -5,7 +5,7 @@ import { Map } from "lucide-react";
 
 const HeatmapPage = () => (
   <div className="min-h-screen bg-gradient-to-br from-blue-900 via-fuchsia-900 to-pink-900 flex flex-col items-center pt-10 pb-20 animate-fade-in crazy-bounce">
-    <div className="w-full max-w-4xl bg-white/90 rounded-3xl shadow-xl p-4 md:p-8 mb-8 flex flex-col gap-4 swing-in flair-wave">
+    <div className="w-full app-container max-w-4xl bg-white/90 rounded-3xl shadow-xl p-4 md:p-8 mb-8 flex flex-col gap-4 swing-in flair-wave">
       <div className="flex items-center gap-3 mb-3">
         <Map className="text-blue-700" size={30} />
         <h1 className="font-extrabold text-2xl text-blue-800">Delhi Civic Heatmap</h1>

@@ -19,11 +19,10 @@ const ConstituencySelector: React.FC<ConstituencySelectorProps> = ({ value, onCh
   const { data: constituencies, isLoading, refetch, error } = useConstituencies();
 
   React.useEffect(() => {
-    console.log("[ConstituencySelector] Constituencies loaded:", constituencies);
     if (error) {
-      console.error("[ConstituencySelector] Error loading constituencies:", error);
+      // handled with UI message below
     }
-  }, [constituencies, error]);
+  }, [error]);
 
   // Optionally, on dropdown focus, refetch data (handles new additions immediately)
   const handleFocus = () => {
@@ -32,7 +31,7 @@ const ConstituencySelector: React.FC<ConstituencySelectorProps> = ({ value, onCh
 
   if (isLoading)
     return (
-      <div className="flex items-center gap-2 py-6 justify-center text-blue-700">
+      <div className="flex items-center gap-2 py-6 justify-center text-primary">
         <Loader2 className="animate-spin" /> Loading constituencies...
       </div>
     );
@@ -52,13 +51,13 @@ const ConstituencySelector: React.FC<ConstituencySelectorProps> = ({ value, onCh
       disabled={isLoading}
     >
       <SelectTrigger
-        className="w-full px-4 py-2 rounded-xl border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white text-blue-900 font-semibold"
+        className="w-full px-4 py-2 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-ring bg-card text-card-foreground font-semibold"
         onFocus={handleFocus}
       >
         <SelectValue placeholder="Select your constituency..." />
       </SelectTrigger>
       <SelectContent
-        className="max-h-80 bg-white z-50"
+        className="max-h-80 bg-popover text-popover-foreground border border-border z-50"
         position="popper"
       >
         {Array.isArray(constituencies) && constituencies.length > 0 ? (

@@ -3,26 +3,47 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JanConnect – Professional Civic Solutions</title>
+    <title>JanConnect – Civic Platform</title>
     <meta name="description" content="JanConnect: Professional civic solutions for reporting, tracking, and resolving public issues." />
-    <meta name="author" content="Lovable" />
     <link rel="canonical" href="/" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" />
 
-    <meta property="og:title" content="JanConnect – Professional Civic Solutions" />
+    <meta property="og:title" content="JanConnect – Civic Platform" />
     <meta property="og:description" content="Report and track civic issues with an authoritative, citizen‑first platform." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <!-- Favicon: switched to neutral SVG to remove old heart icon -->
+    <link rel="icon" type="image/svg+xml" href="/placeholder.svg" />
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <style>
+        .boot-loading{font-family:system-ui,Segoe UI,Arial;padding:16px;color:#444}
+      </style>
+      <div class="boot-loading">Loading JanConnect… If this persists, open DevTools (F12) → Console for details.</div>
+    </div>
+    <script>
+      window.addEventListener('error', function(e){
+        try{
+          var pre=document.createElement('pre');
+          pre.style.padding='12px'; pre.style.background='#fff7f7'; pre.style.border='1px solid #ffd6d6'; pre.style.color='#b00020';
+          pre.textContent='Runtime error: '+(e.error && e.error.message || e.message);
+          document.body.prepend(pre);
+        }catch(_){/* noop */}
+      });
+      window.addEventListener('unhandledrejection', function(e){
+        try{
+          var pre=document.createElement('pre');
+          pre.style.padding='12px'; pre.style.background='#fff7f7'; pre.style.border='1px solid #ffd6d6'; pre.style.color='#b00020';
+          pre.textContent='Unhandled rejection: '+(e.reason && (e.reason.message||e.reason) || 'unknown');
+          document.body.prepend(pre);
+        }catch(_){/* noop */}
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

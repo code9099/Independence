@@ -90,7 +90,7 @@ export default function MyComplaintsPage() {
   const statusCounts = getStatusCounts();
 
   return (
-    <div className="max-w-6xl mx-auto px-6 space-y-8">
+    <div className="app-container page-stack">
       {/* Header */}
         <PageHeader
           title="My Complaints"
@@ -163,7 +163,7 @@ export default function MyComplaintsPage() {
         </div>
       ) : (
         /* Complaints Grid */
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredComplaints.map((complaint) => (
             <ComplaintCard
               key={complaint._id}

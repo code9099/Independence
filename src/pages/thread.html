@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JanConnect • Thread</title>
+    <link rel="stylesheet" href="../styles/thread.css" />
+  </head>
+  <body>
+    <header class="tc-header">
+      <a class="tc-back" href="/">← Back</a>
+      <h1 class="tc-title">Thread</h1>
+    </header>
+
+    <main id="thread-app" class="tc-app" aria-live="polite"></main>
+
+    <!-- Fixed quick reply bar -->
+    <div class="tc-quick-reply" role="region" aria-label="Quick reply">
+      <div class="tc-qr-inner">
+        <textarea id="qr-text" class="tc-qr-input" rows="1" placeholder="Write a reply… (Markdown + Emoji supported)"></textarea>
+        <input id="qr-media" type="url" class="tc-qr-media" placeholder="Media URL (optional)" />
+        <button id="qr-send" class="tc-qr-send">Reply</button>
+      </div>
+    </div>
+
+    <!-- Media modal -->
+    <dialog id="gallery" class="tc-modal">
+      <button class="tc-modal-close" onclick="document.getElementById('gallery').close()">✕</button>
+      <div id="gallery-content" class="tc-gallery"></div>
+    </dialog>
+
+    <script src="../scripts/thread.js" defer></script>
+  </body>
+  </html>
+
+

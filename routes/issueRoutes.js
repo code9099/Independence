@@ -63,7 +63,9 @@ router.post("/", async (req, res) => {
       emailStatus = await sendComplaintEmail({ 
         complaint: complaintData, 
         dept: mapping.department, 
-        departmentHead: mapping.officer 
+        departmentHead: mapping.officer,
+        // Provide directory emails for routing
+        directoryEmails: mapping.emails
       });
       
       console.log('📧 Email result:', emailStatus);
@@ -127,15 +129,22 @@ router.post("/", async (req, res) => {
       console.error('❌ Reporter acknowledgement email failed:', ackErr.message);
     }
 
-    // Save the issue
-    await issue.save();
-    console.log('✅ Issue saved successfully:', issue._id);
+    // Save the issue (non-fatal if DB not available)
+    let dbSaved = false;
+    try {
+      await issue.save();
+      dbSaved = true;
+      console.log('✅ Issue saved successfully:', issue._id);
+    } catch (dbErr) {
+      console.error('⚠️ DB save failed (continuing flow):', dbErr.message);
+    }
 
     // Always return proper JSON response
     res.status(201).json({
       success: true,
       message: "Complaint submitted successfully",
-      issue: issue.toObject(),
+      issue: dbSaved && typeof issue.toObject === 'function' ? issue.toObject() : issue,
+      db: { saved: dbSaved },
       departmentMapping: mapping,
       portalSubmission: portalResult,
       emailStatus,

@@ -2,16 +2,27 @@
 const mongoose = require('mongoose');
 
 const ReplySchema = new mongoose.Schema({
-  user: String,
-  text: String,
-  created: { type: Date, default: Date.now }
+  user: { type: String, default: 'Anonymous' },
+  text: { type: String, required: true },
+  media: [{ type: String }],
+  created: { type: Date, default: Date.now },
+  likes: { type: Number, default: 0 },
+  isPinned: { type: Boolean, default: false },
+  isOfficial: { type: Boolean, default: false },
+  children: { type: [Object], default: [] }
 });
 
+// Note: to allow recursion we will store nested children as plain objects compatible with ReplySchema
+
 const CommentSchema = new mongoose.Schema({
-  user: String,
-  text: String,
+  user: { type: String, default: 'Anonymous' },
+  text: { type: String, required: true },
+  media: [{ type: String }],
   created: { type: Date, default: Date.now },
-  replies: [ReplySchema]
+  likes: { type: Number, default: 0 },
+  isPinned: { type: Boolean, default: false },
+  isOfficial: { type: Boolean, default: false },
+  replies: { type: [Object], default: [] }
 });
 
 const ThreadSchema = new mongoose.Schema({

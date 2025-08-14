@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import ProfileMenu from "@/components/ProfileMenu";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Static navLinks
 const navLinks = [
@@ -18,8 +19,9 @@ type Props = {
 };
 
 export default function AppNavbar({ fixed = true, transparent = false }: Props) {
+  const { user } = useAuth();
   return (
-    <header className={`w-full sticky top-0 z-30 flex items-center justify-between py-3 px-4 md:px-6 h-16 ${transparent ? "bg-background/60" : "bg-background/60"} backdrop-blur border-b border-border shadow-sm`}>
+    <header className={`w-full sticky top-0 z-20 flex items-center justify-between py-3 px-4 md:px-6 h-16 ${transparent ? "bg-background/60" : "bg-background/60"} backdrop-blur border-b border-border shadow-sm`}>
       {/* Left: Logo & Brand */}
       <div className="flex items-center gap-3">
         <SidebarTrigger className="mr-2" />
@@ -54,7 +56,13 @@ export default function AppNavbar({ fixed = true, transparent = false }: Props) 
       {/* Right: Actions (Dark Mode + ProfileMenu only) */}
       <div className="flex items-center gap-2 md:gap-4">
         <DarkModeToggle />
-        <ProfileMenu />
+        {user ? (
+          <ProfileMenu />
+        ) : (
+          <NavLink to="/login" className="px-3 py-1 rounded-lg border border-border text-sm">
+            Log in
+          </NavLink>
+        )}
       </div>
     </header>
   );

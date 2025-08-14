@@ -32,23 +32,16 @@ const CivicHeatmap: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [geoError, setGeoError] = useState<string | null>(null);
 
-  useEffect(() => {
-    console.log('[CivicHeatmap] Rendered');
-  });
-
   // Fetch GeoJSON on mount
   useEffect(() => {
     axios.get(DELHI_GEOJSON_URL)
       .then(res => {
-        console.log('[CivicHeatmap] Loaded GeoJSON from', DELHI_GEOJSON_URL);
-        console.log('[CivicHeatmap] Loaded GeoJSON value:', res.data);
         setGeoJson(res.data);
         setGeoError(null);
       })
-      .catch((err) => {
+      .catch(() => {
         setGeoError("Could not load Delhi boundaries (GeoJSON missing in /public).");
         setGeoJson(null);
-        console.error("GeoJSON load error (local fallback):", err);
       });
   }, []);
 
@@ -57,9 +50,8 @@ const CivicHeatmap: React.FC = () => {
     const fetchData = () => {
       axios.get("/api/heatmap-data")
         .then(res => setHeatmap(res.data))
-        .catch((err) => {
+        .catch(() => {
           setError("Could not load heatmap data.");
-          console.error("Heatmap data error:", err);
         })
         .finally(() => setLoading(false));
     };
@@ -110,15 +102,15 @@ const CivicHeatmap: React.FC = () => {
   const closeModal = () => setSelected(null);
 
   return (
-    <div className="relative w-full rounded-2xl overflow-hidden" style={{ minHeight: 500, border: '1px solid #dee2e6', boxShadow: '0 1px 8px #ccc' }}>
+    <div className="relative w-full rounded-2xl overflow-hidden" style={{ minHeight: 500, border: '1px solid hsl(var(--border))', boxShadow: 'var(--shadow-elegant)' }}>
       {loading && (
-        <div className="absolute inset-0 flex flex-col justify-center items-center z-10 bg-white/60">
+        <div className="absolute inset-0 flex flex-col justify-center items-center z-10 bg-card/80 text-card-foreground">
           <div className="spinner-border text-primary" role="status" />
           <div>Loading map...</div>
         </div>
       )}
-      {error && <div className="alert alert-danger">{error}</div>}
-      {geoError && <div className="alert alert-warning">{geoError}</div>}
+      {error && <div className="text-sm text-red-600 p-2">{error}</div>}
+      {geoError && <div className="text-sm text-amber-600 p-2">{geoError}</div>}
       {/* Always render the map even if geoJson loading failed */}
       <MapContainer
         center={[28.6139, 77.209]}
@@ -148,25 +140,25 @@ const CivicHeatmap: React.FC = () => {
         )}
         {/* Legend */}
         <div className="leaflet-bottom leaflet-left p-2">
-          <div className="bg-white rounded shadow p-3" style={{ fontSize: 13 }}>
+          <div className="bg-card text-card-foreground rounded shadow p-3 border border-border" style={{ fontSize: 13 }}>
             <b>Legend</b>
-            <div className="d-flex align-items-center mt-2">
-              <div style={{ width: 18, height: 18, background: "#f87171", borderRadius: 15, marginRight: 8 }} />
+            <div className="flex items-center mt-2 gap-2">
+              <div style={{ width: 18, height: 18, background: "#f87171", borderRadius: 15 }} />
               <span>8+ issues (High)</span>
             </div>
-            <div className="d-flex align-items-center">
-              <div style={{ width: 18, height: 18, background: "#fde047", borderRadius: 15, marginRight: 8 }} />
+            <div className="flex items-center gap-2">
+              <div style={{ width: 18, height: 18, background: "#fde047", borderRadius: 15 }} />
               <span>4–7 issues (Moderate)</span>
             </div>
-            <div className="d-flex align-items-center">
-              <div style={{ width: 18, height: 18, background: "#4ade80", borderRadius: 15, marginRight: 8 }} />
+            <div className="flex items-center gap-2">
+              <div style={{ width: 18, height: 18, background: "#4ade80", borderRadius: 15 }} />
               <span>0–3 (Low)</span>
             </div>
           </div>
         </div>
       </MapContainer>
       {/* Modal */}
-      {selected &&
+      {selected && (
         <div className="modal fade show d-block" tabIndex={-1} style={{ background: "rgba(0,0,0,0.6)" }}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content shadow-lg">
@@ -200,7 +192,7 @@ const CivicHeatmap: React.FC = () => {
             </div>
           </div>
         </div>
-      }
+      )}
     </div>
   );
 };

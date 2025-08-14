@@ -3,6 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Tailwind preflight is required by the design system. Re-apply a minimal reset guard if needed. */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -83,7 +84,7 @@
     font-family: 'Public Sans', system-ui, sans-serif;
   }
   body {
-    @apply min-h-screen bg-background text-foreground transition-colors duration-300;
+    @apply min-h-screen bg-background text-foreground transition-colors duration-300 overflow-x-hidden;
     background: var(--gradient-surface), hsl(var(--background));
   }
 
@@ -91,6 +92,47 @@
 }
 
 @layer components {
+  /* Global responsive container to prevent sidebar overlap and add consistent spacing */
+  .app-container {
+    @apply w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8;
+  }
+
+  /* Full-bleed utility to stretch a section edge-to-edge while inside a centered container */
+  .full-bleed {
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    width: 100vw;
+    @apply px-4 md:px-8;
+  }
+
+  /* Section wrapper to visually separate blocks */
+  .section-block {
+    @apply bg-card border border-border rounded-xl shadow-sm p-4 md:p-6 lg:p-8;
+  }
+
+  /* Ensure media scales and never causes overflow */
+  .responsive-media {
+    @apply max-w-full h-auto rounded-md;
+  }
+
+  /* Utility for balanced vertical spacing between sections */
+  .page-stack {
+    @apply space-y-6 md:space-y-8 lg:space-y-10;
+  }
+
+  /* Prevent long words/URLs from breaking layout */
+  .break-anywhere {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  /* Tables responsive wrapper */
+  .table-responsive {
+    @apply w-full overflow-x-auto;
+  }
   .text-gradient {
     background: var(--gradient-brand);
     -webkit-background-clip: text;
@@ -110,6 +152,11 @@
 
   .hover-scale {
     @apply transition-transform duration-200 hover:scale-105;
+  }
+
+  /* Improved focus ring for accessibility */
+  .focus-ring {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
 
   /* Netflix-style utilities */

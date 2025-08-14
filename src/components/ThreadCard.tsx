@@ -16,11 +16,11 @@ function ThreadCard({ thread }: { thread: any }) {
     <div className="bg-white dark:bg-muted/80 rounded-xl px-0 pb-5 mb-5 shadow border border-blue-50 animate-fade-in relative overflow-hidden">
       {/* Thread Image */}
       {thread.image && (
-        <img src={thread.image} alt="thread subject" className="w-full h-52 object-cover object-center rounded-t-xl" />
+        <img src={thread.image} alt="thread subject" className="w-full h-52 object-cover object-center rounded-t-xl responsive-media" />
       )}
       <div className="px-6 pt-4">
         <div className="flex items-center gap-3">
-          <img src={thread.avatar} alt={thread.user} className="w-8 h-8 rounded-full border" />
+          <img src={thread.avatar} alt={thread.user} className="w-8 h-8 rounded-full border responsive-media" />
           <span className="font-semibold">{thread.user}</span>
           <span className="text-lg">{thread.emoji}</span>
           <span className="ml-auto text-xs text-gray-400">{thread.created}</span>

@@ -20,7 +20,7 @@ const LeaderboardPage = () => {
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 md:px-6 py-6 space-y-6">
+    <div className="app-container py-6 page-stack">
       <PageHeader
         title="Constituency Leaderboard"
         subtitle="Compare performance and track representatives"
@@ -31,7 +31,7 @@ const LeaderboardPage = () => {
         )}
       />
 
-      <section className="bg-card rounded-2xl border border-border shadow-sm p-6">
+      <section className="section-block">
         <div className="mb-4">
           <ConstituencySelector value={selectedConId} onChange={setSelectedConId} />
         </div>

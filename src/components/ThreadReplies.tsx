@@ -13,7 +13,7 @@ function ThreadReplies({ comments = [] }: { comments: any[] }) {
       {comments.map((comment: any) => (
         <div className="mb-2" key={comment.id}>
           <div className="flex items-center gap-2">
-            <img src={comment.avatar} alt={comment.user} className="w-7 h-7 rounded-full border" />
+            <img src={comment.avatar} alt={comment.user} className="w-7 h-7 rounded-full border responsive-media" />
             <span className="font-medium">{comment.user}</span>
             <span className="text-xs text-gray-400">{comment.created}</span>
           </div>
@@ -22,7 +22,7 @@ function ThreadReplies({ comments = [] }: { comments: any[] }) {
             <div className="pl-8 mt-2 border-l border-gray-100 dark:border-gray-600">
               {comment.replies.map((reply: any) => (
                 <div className="flex items-center gap-2 mb-2" key={reply.id}>
-                  <img src={reply.avatar} alt={reply.user} className="w-6 h-6 rounded-full border" />
+                  <img src={reply.avatar} alt={reply.user} className="w-6 h-6 rounded-full border responsive-media" />
                   <span className="font-medium">{reply.user}</span>
                   <span className="ml-1">{reply.text}</span>
                   <span className="text-xs text-gray-400">{reply.created}</span>

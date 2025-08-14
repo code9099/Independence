@@ -34,6 +34,109 @@ const ISSUE_DEPARTMENT_MAP = {
   "other": "MCD"
 };
 
+// Email directory (primary + cc)
+const EMAIL_DIRECTORY = {
+  PWD: {
+    primary: [
+      "einc-pwd@delhi.gov.in",
+      "dirw-pwd@delhi.gov.in",
+      "dirm-pwd@delhi.gov.in",
+      "dirp-pwd@delhi.gov.in",
+    ],
+    cc: [
+      "pss-pwd.minister@delhi.gov.in",
+      // Zones
+      "cepwddelhimzm1@gmail.com", // South
+      "cepwddelhimzm2@gmail.com", // East
+      "cepwddelhimzm3@gmail.com", // North
+      "cepwdflyover@gmail.com",  // Flyover
+    ],
+  },
+  MCD: {
+    primary: [
+      "mcd-ithelpdesk@mcd.nic.in",
+      "commissioner@mcd.nic.in",
+    ],
+    cc: [
+      "dyanccnz@mcd.org.in",
+      "dyancwz@mcd.org.in",
+      "dyancsz@mcd.org.in",
+      "dyancngz@mcd.org.in",
+    ],
+  },
+  DJB: {
+    primary: [
+      "grievances-djb@delhi.gov.in",
+      "vc-djb@delhi.gov.in",
+    ],
+    cc: [],
+  },
+  ELECTRICITY: {
+    primary: [
+      // BRPL / BYPL / TPDDL escalation inboxes
+      "brplhead.customercare@relianceada.com",
+      "cgf.brpl@relianceada.com",
+      "prem.r.kumar@relianceada.com",
+      "customercare@tatapower-ddl.com",
+      "md.office@tatapower-ddl.com",
+      "cgredressal.forum@tatapower-ddl.com",
+      "elect_ombudsman@yahoo.com",
+    ],
+    cc: [],
+  },
+  DTC: {
+    primary: [
+      "ccc@dtc.nic.in",
+      "cmd@dtc.nic.in",
+    ],
+    cc: [
+      "rmeast@dtc.nic.in",
+      "rmwest@dtc.nic.in",
+      "rmnorth@dtc.nic.in",
+      "rmsouth@dtc.nic.in",
+    ],
+  },
+  TRAFFIC: {
+    primary: [
+      "jtcpt.dtp@nic.in",
+      "jtcp.transportrange@delhipolice.gov.in",
+    ],
+    cc: [],
+  },
+  NDMC: {
+    primary: [
+      "care@ndmc.gov.in",
+      "it@ndmc.gov.in",
+      "director.hl@ndmc.gov.in",
+    ],
+    cc: [],
+  },
+  POLICE: {
+    primary: [
+      "pca.delhi@delhi.gov.in",
+      "dcp-vigilance-dl@nic.in",
+    ],
+    cc: [],
+  },
+  DDA: {
+    primary: [],
+    cc: [],
+  },
+};
+
+function pickEmailGroup(category) {
+  const key = category.toLowerCase();
+  if (key.includes('water')) return EMAIL_DIRECTORY.DJB;
+  if (key.includes('electric')) return EMAIL_DIRECTORY.ELECTRICITY;
+  if (key.includes('pothole') || key.includes('road') || key.includes('street')) return EMAIL_DIRECTORY.PWD;
+  if (key.includes('garbage') || key.includes('sanitation') || key.includes('waste')) return EMAIL_DIRECTORY.MCD;
+  if (key.includes('bus') || key.includes('dtc')) return EMAIL_DIRECTORY.DTC;
+  if (key.includes('traffic')) return EMAIL_DIRECTORY.TRAFFIC;
+  if (key.includes('ndmc')) return EMAIL_DIRECTORY.NDMC;
+  if (key.includes('police')) return EMAIL_DIRECTORY.POLICE;
+  return EMAIL_DIRECTORY.MCD;
+}
+
 // Mock officer database - In production, this would be an API call
 const OFFICER_DATABASE = {
   "DJB": {
@@ -162,11 +265,18 @@ async function getDepartmentMapping(issueType, constituency = "New Delhi") {
   const department = mapIssueToDepartment(issueType);
   const officer = await getOfficerInfo(department, constituency);
   const portalUrl = PORTAL_URLS[department];
+  const emailGroup = pickEmailGroup(issueType);
+  const emails = {
+    to: emailGroup.primary && emailGroup.primary.length ? emailGroup.primary[0] : undefined,
+    cc: emailGroup.cc || [],
+    all: [ ...(emailGroup.primary || []), ...(emailGroup.cc || []) ],
+  };
   
   return {
     department,
     officer,
     portalUrl,
+    emails,
     mapping: {
       issueType,
       constituency,

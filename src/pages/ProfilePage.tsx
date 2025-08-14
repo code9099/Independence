@@ -46,7 +46,8 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="max-w-lg mx-auto my-12 p-8 bg-white/70 rounded-2xl shadow-md border border-blue-100 flex flex-col gap-6 animate-fade-in flair-wave spin-in">
+    <div className="app-container my-12">
+      <div className="max-w-lg mx-auto p-8 bg-white/70 rounded-2xl shadow-md border border-blue-100 flex flex-col gap-6 animate-fade-in flair-wave spin-in">
       {/* Page title */}
       <h2 className="font-black text-3xl text-blue-900 mb-2 crazy-bounce">
         My Profile
@@ -85,6 +86,7 @@ export default function ProfilePage() {
           <div className="text-green-600 text-sm">{savingMsg}</div>
         )}
       </form>
+      </div>
     </div>
   );
 }

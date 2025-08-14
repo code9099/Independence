@@ -11,7 +11,8 @@ export default function SettingsPage() {
   // Always show settings page since we're assuming user is logged in
   // In a real app, you'd check authentication status here
   return (
-    <div className="max-w-lg mx-auto my-12 p-8 bg-white/70 rounded-2xl shadow-md border border-blue-100 animate-fade-in spin-in crazy-bounce">
+    <div className="app-container my-12">
+      <div className="max-w-lg mx-auto p-8 bg-white/70 rounded-2xl shadow-md border border-blue-100 animate-fade-in spin-in crazy-bounce">
       {/* Page title with custom styling classes */}
       <h2 className="font-black text-3xl text-blue-900 mb-6 flair-wave">
         Settings
@@ -29,6 +30,7 @@ export default function SettingsPage() {
           - Theme selection
           - Language preferences
       */}
+      </div>
     </div>
   );
 }

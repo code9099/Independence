@@ -1,73 +1,96 @@
-# Welcome to your Lovable project
+# JanConnect – Civic Platform for Citizens
 
-## Project info
+A modern, transparent, and interactive way for citizens to report issues, track progress, and see real-time problem resolution — while engaging with the community.
 
-**URL**: https://lovable.dev/projects/a088118d-3b8a-47fa-969f-3544ef68844e
+Developer: Kashish Aggarwal
 
-## How can I edit this code?
+## Getting started
 
-There are several ways of editing your application.
+1. Install dependencies
+```bash
+npm install
+```
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/a088118d-3b8a-47fa-969f-3544ef68844e) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+2. Run in development
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+3. Build for production
+```bash
+npm run build
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+4. Preview production build
+```bash
+npm run preview
+```
 
-**Use GitHub Codespaces**
+## Tech stack
+- Vite + React + TypeScript
+- Tailwind CSS + shadcn/ui
+- Express + Mongoose (MongoDB)
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Environment
+- Set these in `janconnect-citizen-hub/.env`:
+```
+VITE_SUPABASE_URL=YOUR_SUPABASE_URL
+VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
 
-## What technologies are used for this project?
+# Optional for dev API
+MONGODB_URI=mongodb://localhost:27017/janconnect
 
-This project is built with:
+# SMTP (for email routing)
+EMAIL_USERNAME=your@gmail.com
+EMAIL_PASSWORD=your-app-password
+SMTP_SERVICE=gmail
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_SECURE=true
+ADMIN_EMAIL=your@gmail.com
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Deploy (Vercel + Supabase)
 
-## How can I deploy this project?
+1) Supabase
+- SQL → run all migrations in `supabase/migrations/*`
+- Auth → URL Configuration
+  - Site URL: `http://localhost:8080`
+  - Additional Redirect URLs: `http://localhost:8080/auth/callback`
+- Auth → Providers → Google: enable + credentials + redirect to `/auth/callback`
 
-Simply open [Lovable](https://lovable.dev/projects/a088118d-3b8a-47fa-969f-3544ef68844e) and click on Share -> Publish.
+2) Vercel
+- Root: `janconnect-citizen-hub`
+- Build: `npm run build` → Output: `dist`
+- Include `vercel.json`
+- Env on Vercel:
+  - `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
+  - `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
+  - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`
+  - `EMAIL_FROM`, `EMAIL_REPLY_TO`, `APP_BASE_URL`
 
-## Can I connect a custom domain to my Lovable project?
+## Project structure
 
-Yes, you can!
+```
+janconnect-citizen-hub/
+  public/                # static assets (favicon, media)
+  src/
+    pages/               # e.g., thread.html (static page variant)
+    styles/              # thread.css
+    scripts/             # thread.js
+    components/          # React components used in app
+  routes/                # Express API routes for dev/local
+  services/              # Email routing, department mapping
+  supabase/              # SQL migrations
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Common issues
+- Blank screen → Ensure `.env` has `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+- Google login 400 → Enable Google provider in Supabase and set redirect to `/auth/callback`.
+- API 404/500 in dev → Run `node server.js`; Vite proxies `/api` to `localhost:5000`.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+3) Optional Express API in dev
+```
+node server.js
+```

@@ -2,7 +2,7 @@
 
 A modern, transparent, and interactive way for citizens to report issues, track progress, and see real-time problem resolution — while engaging with the community.
 
-Developer: Kashish Aggarwal
+Developer: Kashish Aggarwal 
 
 ## Getting started
 

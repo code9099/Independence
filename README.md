@@ -47,6 +47,10 @@ SMTP_SERVICE=gmail
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=465
 SMTP_SECURE=true
+
+# Optional Supabase for department directory and email logs
+SUPABASE_URL=https://<your-project-ref>.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ADMIN_EMAIL=your@gmail.com
 ```
 

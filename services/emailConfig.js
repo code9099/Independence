@@ -31,6 +31,19 @@ function createEmailTransporter() {
   return nodemailer.createTransport(baseConfig);
 }
 
+// Verify SMTP connectivity
+async function testEmailConnection() {
+  try {
+    const transporter = createEmailTransporter();
+    // transporter.verify() resolves if the connection config looks valid
+    await transporter.verify();
+    return true;
+  } catch (err) {
+    console.error('❌ SMTP verify failed:', err.message);
+    return false;
+  }
+}
+
 // Enhanced email templates
 const emailTemplates = {
   complaintNotification: {
@@ -88,5 +101,6 @@ const emailTemplates = {
 
 module.exports = {
   createEmailTransporter,
-  emailTemplates
+  emailTemplates,
+  testEmailConnection
 };

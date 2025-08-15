@@ -266,11 +266,53 @@ async function getDepartmentMapping(issueType, constituency = "New Delhi") {
   const officer = await getOfficerInfo(department, constituency);
   const portalUrl = PORTAL_URLS[department];
   const emailGroup = pickEmailGroup(issueType);
-  const emails = {
+  let emails = {
     to: emailGroup.primary && emailGroup.primary.length ? emailGroup.primary[0] : undefined,
     cc: emailGroup.cc || [],
     all: [ ...(emailGroup.primary || []), ...(emailGroup.cc || []) ],
   };
+
+  // Try Supabase-backed directory if configured
+  try {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (supabaseUrl && supabaseKey && typeof fetch === 'function') {
+      const params = new URLSearchParams({
+        select: '*',
+        active: 'eq.true',
+        dept_id: `eq.${department}`,
+        limit: '1'
+      });
+      const resp = await fetch(`${supabaseUrl}/rest/v1/departments?${params.toString()}`, {
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+        }
+      });
+      if (resp.ok) {
+        const rows = await resp.json();
+        if (Array.isArray(rows) && rows.length > 0) {
+          const row = rows[0];
+          const primary = (row.primary_email || '').trim();
+          const cc = (row.cc_emails || '')
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean);
+          if (primary || cc.length) {
+            emails = {
+              to: primary || emails.to,
+              cc,
+              all: [primary, ...cc].filter(Boolean)
+            };
+          }
+        }
+      } else {
+        console.warn('Supabase directory fetch failed with status', resp.status);
+      }
+    }
+  } catch (e) {
+    console.warn('Supabase directory lookup skipped:', e?.message || e);
+  }
   
   return {
     department,

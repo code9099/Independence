@@ -16,7 +16,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function SignupPage() {
-  const { signUpWithPassword, signInWithGoogle } = useAuth();
+  const { signUpWithPassword, signInWithGoogle, signInWithPassword } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -28,7 +28,15 @@ export default function SignupPage() {
       toast({ title: "Signup failed", description: error, variant: "destructive" });
       return;
     }
-    toast({ title: "Account created", description: "Check your inbox to confirm your email (if required)." });
+    // Try immediate login so header switches to Profile
+    const signInRes = await signInWithPassword(values.email, values.password);
+    if (signInRes.error) {
+      // Likely email confirmation required
+      toast({ title: "Account created", description: "Check your email to confirm your account before logging in.", });
+      navigate("/");
+      return;
+    }
+    toast({ title: "Welcome!", description: "Your account is ready." });
     navigate("/");
   };
 

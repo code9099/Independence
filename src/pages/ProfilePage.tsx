@@ -6,25 +6,39 @@
  * Currently uses mock data since authentication is removed.
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
-// Mock user data since we're assuming user is always logged in
-// In a real app, this would come from your authentication system
-const mockUser = {
-  email: "user@janconnect.com",
-  id: "mock-user-id"
-};
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function ProfilePage() {
-  // State for editable username
-  const [username, setUsername] = useState("Demo User");
-  const [initialUsername, setInitialUsername] = useState("Demo User");
+  const { user } = useAuth();
+  const [username, setUsername] = useState("");
+  const [initialUsername, setInitialUsername] = useState("");
+  const [email, setEmail] = useState<string | null>(null);
   
   // UI state for save operation
   const [saving, setSaving] = useState(false);
   const [savingMsg, setSavingMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      if (!user) return;
+      setEmail(user.email);
+      // Load profile
+      const { data, error } = await supabase
+        // Cast to any to avoid mismatch with generated types file
+        .from('profiles' as any)
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+      if (!error && data) {
+        setUsername(data.full_name || "");
+        setInitialUsername(data.full_name || "");
+      }
+    })();
+  }, [user]);
 
   /**
    * Handles profile form submission
@@ -35,14 +49,21 @@ export default function ProfilePage() {
     setSaving(true);
     setSavingMsg(null);
 
-    // Mock save operation with artificial delay
-    // In a real app, this would make an API call to update user data
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Update the initial username to reflect saved state
-    setInitialUsername(username);
-    setSavingMsg("Profile updated!");
-    setSaving(false);
+    try {
+      if (!user) return;
+      const { error } = await supabase
+        // Cast to any to avoid mismatch with generated types file
+        .from('profiles' as any)
+        .update({ full_name: username })
+        .eq('id', user.id);
+      if (error) throw error;
+      setInitialUsername(username);
+      setSavingMsg("Profile updated!");
+    } catch (err: any) {
+      setSavingMsg(err?.message || "Failed to update profile");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -57,7 +78,7 @@ export default function ProfilePage() {
       <div className="swing-in">
         <label className="block font-bold mb-1">Email</label>
         <div className="bg-gray-100 rounded-md px-4 py-2">
-          {mockUser.email}
+          {email ?? '—'}
         </div>
       </div>
       

@@ -19,7 +19,7 @@ type Props = {
 };
 
 export default function AppNavbar({ fixed = true, transparent = false }: Props) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   return (
     <header className={`w-full sticky top-0 z-20 flex items-center justify-between py-3 px-4 md:px-6 h-16 ${transparent ? "bg-background/60" : "bg-background/60"} backdrop-blur border-b border-border shadow-sm`}>
       {/* Left: Logo & Brand */}
@@ -56,7 +56,9 @@ export default function AppNavbar({ fixed = true, transparent = false }: Props) 
       {/* Right: Actions (Dark Mode + ProfileMenu only) */}
       <div className="flex items-center gap-2 md:gap-4">
         <DarkModeToggle />
-        {user ? (
+        {loading ? (
+          <div className="w-10 h-10 rounded-full bg-muted animate-pulse" />
+        ) : user ? (
           <ProfileMenu />
         ) : (
           <NavLink to="/login" className="px-3 py-1 rounded-lg border border-border text-sm">

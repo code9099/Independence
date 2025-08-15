@@ -30,12 +30,17 @@ EMAIL_USERNAME=your_gmail@gmail.com
 EMAIL_PASSWORD=your_16_character_app_password
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
+SMTP_SECURE=false
 
 # Admin Configuration
 ADMIN_EMAIL=admin@janconnect.in
 
 # MongoDB (if using remote)
 MONGODB_URI=mongodb://localhost:27017/janconnect
+
+# Supabase (optional for directory + email logs)
+SUPABASE_URL=https://<your-project-ref>.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
 #### Step 4: Update Officer Database
@@ -56,7 +61,22 @@ const OFFICER_DATABASE = {
 };
 ```
 
-### 3. Start the Application
+### 3. Supabase Auth (Email/Password + Google)
+
+Set these in your frontend `.env` for the Vite app:
+
+```env
+VITE_SUPABASE_URL=https://<your-project-ref>.supabase.co
+VITE_SUPABASE_ANON_KEY=your_anon_key
+```
+
+In Supabase Dashboard, enable Email and Google providers. Set OAuth redirect to:
+
+`https://localhost:5173/auth/callback` (dev) or your deployed domain `/auth/callback`.
+
+Run the migrations in `supabase/migrations` so `public.profiles` exists and RLS allows a user to read/update their own profile.
+
+### 4. Start the Application
 
 #### Backend:
 ```bash
@@ -68,13 +88,13 @@ node server.js
 npm run dev
 ```
 
-### 4. Test Email Functionality
+### 5. Test Email Functionality
 
 1. Submit a test complaint via `/report`
 2. Check console logs for email status
 3. Verify email delivery to officer
 
-### 5. Department Mapping
+### 6. Department Mapping
 
 The system automatically maps:
 - **Water issues** → DJB (Delhi Jal Board)
@@ -82,7 +102,7 @@ The system automatically maps:
 - **Garbage/Sanitation** → MCD (Municipal Corporation of Delhi)
 - **Others** → MCD (default)
 
-### 6. Complaint Flow
+### 7. Complaint Flow
 
 1. User submits complaint → `/api/issues`
 2. System determines department via AI mapping
